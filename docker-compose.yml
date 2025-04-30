@@ -1,0 +1,155 @@
+version: '3.8'
+
+# Define networks
+networks:
+  traefik-public:
+    name: ${DOCKER_NETWORK}
+    driver: bridge
+
+# Define services
+services:
+  # Traefik Reverse Proxy
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - traefik-public
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${TRAEFIK_CONFIG_PATH}:/etc/traefik
+      - ${TRAEFIK_CONFIG_PATH}/acme.json:/etc/traefik/acme.json
+    environment:
+      - TZ=${HOMEASSISTANT_TIMEZONE}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN}`)"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.traefik.middlewares=traefik-auth"
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_DASHBOARD_USER}:${TRAEFIK_DASHBOARD_PASSWORD}"
+
+  # Homepage Dashboard
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    restart: unless-stopped
+    networks:
+      - traefik-public
+    volumes:
+      - ${HOMEPAGE_CONFIG_PATH}:/app/config
+      - ${HOMEPAGE_DATA_PATH}:/app/data
+    environment:
+      - TZ=${HOMEASSISTANT_TIMEZONE}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homepage.rule=Host(`homepage.${DOMAIN}`)"
+      - "traefik.http.routers.homepage.entrypoints=websecure"
+      - "traefik.http.routers.homepage.tls.certresolver=letsencrypt"
+
+  # Home Assistant
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: homeassistant
+    restart: unless-stopped
+    networks:
+      - traefik-public
+    volumes:
+      - ${HOMEASSISTANT_CONFIG_PATH}:/config
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - TZ=${HOMEASSISTANT_TIMEZONE}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homeassistant.rule=Host(`homeassistant.${DOMAIN}`)"
+      - "traefik.http.routers.homeassistant.entrypoints=websecure"
+      - "traefik.http.routers.homeassistant.tls.certresolver=letsencrypt"
+
+  # Syncthing
+  syncthing:
+    image: syncthing/syncthing:latest
+    container_name: syncthing
+    restart: unless-stopped
+    networks:
+      - traefik-public
+    volumes:
+      - ${SYNCTHING_CONFIG_PATH}:/var/syncthing
+    environment:
+      - PUID=${SYNCTHING_PUID}
+      - PGID=${SYNCTHING_PGID}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.syncthing.rule=Host(`syncthing.${DOMAIN}`)"
+      - "traefik.http.routers.syncthing.entrypoints=websecure"
+      - "traefik.http.routers.syncthing.tls.certresolver=letsencrypt"
+
+  # Jellyfin
+  jellyfin:
+    image: linuxserver/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    networks:
+      - traefik-public
+    volumes:
+      - ${JELLYFIN_CONFIG_PATH}:/config
+      - ${JELLYFIN_DATA_PATH}:/data
+    environment:
+      - PUID=${JELLYFIN_PUID}
+      - PGID=${JELLYFIN_PGID}
+      - TZ=${JELLYFIN_TIMEZONE}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.${DOMAIN}`)"
+      - "traefik.http.routers.jellyfin.entrypoints=websecure"
+      - "traefik.http.routers.jellyfin.tls.certresolver=letsencrypt"
+
+  # Calibre
+  calibre:
+    image: linuxserver/calibre:latest
+    container_name: calibre
+    restart: unless-stopped
+    networks:
+      - traefik-public
+    volumes:
+      - ${CALIBRE_CONFIG_PATH}:/config
+      - ${CALIBRE_DATA_PATH}:/books
+    environment:
+      - PUID=${CALIBRE_PUID}
+      - PGID=${CALIBRE_PGID}
+      - TZ=${CALIBRE_TIMEZONE}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.calibre.rule=Host(`calibre.${DOMAIN}`)"
+      - "traefik.http.routers.calibre.entrypoints=websecure"
+      - "traefik.http.routers.calibre.tls.certresolver=letsencrypt"
+
+  # Pi-hole
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    restart: unless-stopped
+    networks:
+      - traefik-public
+    volumes:
+      - ${PIHOLE_CONFIG_PATH}:/etc/pihole
+      - ${PIHOLE_DNSMASQ_PATH}:/etc/dnsmasq.d
+    environment:
+      - TZ=${PIHOLE_TIMEZONE}
+      - WEBPASSWORD=${PIHOLE_PASSWORD}
+      - DNS1=${PIHOLE_DNS1}
+      - DNS2=${PIHOLE_DNS2}
+    # Note: DNS port 53 is exposed directly, not through Traefik
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pihole.rule=Host(`pihole.${DOMAIN}`)"
+      - "traefik.http.routers.pihole.entrypoints=websecure"
+      - "traefik.http.routers.pihole.tls.certresolver=letsencrypt" 

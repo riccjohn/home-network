@@ -1,0 +1,71 @@
+# Homepage Services Configuration
+# This file defines the services that will appear on the Homepage dashboard
+
+# Service Groups
+groups:
+  - name: "Home Automation"
+    icon: "home"
+  - name: "Media"
+    icon: "play"
+  - name: "File Management"
+    icon: "folder"
+  - name: "Network"
+    icon: "globe"
+
+# Services Configuration
+services:
+  # Home Assistant
+  - name: "Home Assistant"
+    icon: "home-assistant"
+    href: "https://homeassistant.${DOMAIN}"
+    group: "Home Automation"
+    description: "Home automation platform"
+    widget:
+      type: "homeassistant"
+      config:
+        url: "https://homeassistant.${DOMAIN}"
+        token: "your_homeassistant_token"  # Replace with your Home Assistant token
+
+  # Jellyfin
+  - name: "Jellyfin"
+    icon: "jellyfin"
+    href: "https://jellyfin.${DOMAIN}"
+    group: "Media"
+    description: "Media server"
+    widget:
+      type: "jellyfin"
+      config:
+        url: "https://jellyfin.${DOMAIN}"
+        token: "your_jellyfin_token"  # Replace with your Jellyfin token
+
+  # Calibre
+  - name: "Calibre"
+    icon: "book"
+    href: "https://calibre.${DOMAIN}"
+    group: "Media"
+    description: "E-book management"
+
+  # Syncthing
+  - name: "Syncthing"
+    icon: "sync"
+    href: "https://syncthing.${DOMAIN}"
+    group: "File Management"
+    description: "File synchronization"
+
+  # Pi-hole
+  - name: "Pi-hole"
+    icon: "shield"
+    href: "https://pihole.${DOMAIN}"
+    group: "Network"
+    description: "Network-wide ad blocking"
+    widget:
+      type: "pihole"
+      config:
+        url: "https://pihole.${DOMAIN}"
+        token: "your_pihole_token"  # Replace with your Pi-hole token
+
+  # Homepage
+  - name: "Homepage"
+    icon: "home"
+    href: "https://homepage.${DOMAIN}"
+    description: "Dashboard homepage" 

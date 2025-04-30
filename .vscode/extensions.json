@@ -1,0 +1,32 @@
+{
+    "recommendations": [
+        // Docker support
+        "ms-azuretools.vscode-docker",
+        
+        // YAML support
+        "redhat.vscode-yaml",
+        
+        // Shell script support
+        "timonwong.shellcheck",
+        "foxundermoon.shell-format",
+        
+        // Remote development
+        "ms-vscode-remote.remote-ssh",
+        
+        // Markdown support
+        "yzhang.markdown-all-in-one",
+        
+        // Terminal integration
+        "ms-vscode-remote.remote-containers",
+        
+        // Environment file support
+        "mikestead.dotenv",
+        
+        // File icons
+        "file-icons.file-icons",
+        
+        // Traefik specific
+        "traefik.traefik-configuration-syntax",
+        "vscodevim.vim"
+    ]
+} 
