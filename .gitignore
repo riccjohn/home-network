@@ -1,0 +1,25 @@
+# Environment variables
+.env
+
+# Node.js
+node_modules/
+.pnpm-store/
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Traefik
+traefik/acme.json
+
+# Service data
+service-configs/
+homepage/data/
+
+# IDE
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db 

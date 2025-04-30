@@ -1,0 +1,16 @@
+{
+  "name": "home-network",
+  "version": "1.0.0",
+  "description": "Secure home server setup with Docker Compose and Traefik",
+  "scripts": {
+    "format": "prettier --write .",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "prettier": "^3.2.5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+} 

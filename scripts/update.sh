@@ -10,28 +10,24 @@ if [ ! -f .env ]; then
 fi
 
 # Load environment variables
-# shellcheck disable=SC1091
 source .env
 
 # Pull latest images
 echo "Pulling latest images..."
-docker-compose pull
+docker compose pull
 
 # Stop and remove existing containers
 echo "Stopping existing containers..."
-docker-compose down
+docker compose down
 
 # Start containers with new images
 echo "Starting containers with new images..."
-docker-compose up -d
+docker compose up -d
 
 # Clean up unused images
 echo "Cleaning up unused images..."
 docker image prune -f
 
-# Check service status
-echo "Checking service status..."
-docker-compose ps
-
 echo "Update complete! All services have been updated to their latest versions."
-echo "Note: It may take a few minutes for services to fully start up." 
+echo "Please check the service status:"
+docker compose ps 

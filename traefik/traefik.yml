@@ -1,17 +1,14 @@
-# Traefik Configuration File
-# This configuration provides secure defaults and automatic HTTPS with Let's Encrypt
-
-# Global Configuration
+# Global configuration
 global:
   checkNewVersion: true
   sendAnonymousUsage: false
 
-# API Configuration (disabled for security)
+# API and dashboard configuration
 api:
-  dashboard: false
+  dashboard: true
   insecure: false
 
-# Entrypoints Configuration
+# Entrypoints configuration
 entryPoints:
   web:
     address: ":80"
@@ -20,19 +17,28 @@ entryPoints:
         entryPoint:
           to: websecure
           scheme: https
+          permanent: true
+
   websecure:
     address: ":443"
+    http:
+      tls:
+        certResolver: letsencrypt
 
-# Providers Configuration
-providers:
-  docker:
-    exposedByDefault: false
-    network: ${DOCKER_NETWORK}
-  file:
-    directory: /etc/traefik/dynamic
-    watch: true
+# TLS configuration
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+      cipherSuites:
+        - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
 
-# Certificates Configuration
+# Let's Encrypt configuration
 certificatesResolvers:
   letsencrypt:
     acme:
@@ -41,46 +47,27 @@ certificatesResolvers:
       httpChallenge:
         entryPoint: web
 
-# Logs Configuration
+# Docker provider configuration
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    network: ${DOCKER_NETWORK:-home-server-network}
+
+# Logging configuration
 log:
   level: INFO
   format: common
 
-# Access Log Configuration
+# Access log configuration
 accessLog:
   format: common
   fields:
     defaultMode: keep
-    names:
-      ClientUsername: drop
-      ClientHost: keep
-      ClientPort: drop
-      ClientAddr: keep
-      DownstreamAddr: keep
-      DownstreamHost: keep
-      DownstreamPort: drop
-      Duration: keep
-      OriginDuration: keep
-      Overhead: keep
-      RequestAddr: keep
-      RequestContentSize: keep
-      RequestHost: keep
-      RequestMethod: keep
-      RequestPath: keep
-      RequestPort: drop
-      RequestProtocol: keep
-      RequestScheme: keep
-      ResponseContentSize: keep
-      ResponseStatus: keep
-      ResponseTime: keep
-      RetryAttempts: keep
-      StartUTC: keep
-      StartLocal: keep
-      TLSClientIssuer: keep
-      TLSClientSubject: keep
-      TLSVersion: keep
-      TLSCipher: keep
-      TLSServerName: keep
-      UpstreamAddr: keep
-      UpstreamHost: keep
-      UpstreamPort: drop 
+    headers:
+      defaultMode: keep
+      names:
+        User-Agent: keep
+        Authorization: drop
+        Cookie: drop
+        Set-Cookie: drop 

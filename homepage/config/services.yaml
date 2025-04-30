@@ -1,71 +1,57 @@
-# Homepage Services Configuration
-# This file defines the services that will appear on the Homepage dashboard
-
-# Service Groups
-groups:
-  - name: "Home Automation"
-    icon: "home"
-  - name: "Media"
-    icon: "play"
-  - name: "File Management"
-    icon: "folder"
-  - name: "Network"
-    icon: "globe"
-
-# Services Configuration
+# Homepage services configuration
 services:
-  # Home Assistant
-  - name: "Home Assistant"
-    icon: "home-assistant"
-    href: "https://homeassistant.${DOMAIN}"
-    group: "Home Automation"
-    description: "Home automation platform"
+  - name: Home Assistant
+    icon: home-assistant.png
+    href: https://homeassistant.${DOMAIN}
+    description: Home automation platform
+    group: Home Automation
     widget:
-      type: "homeassistant"
-      config:
-        url: "https://homeassistant.${DOMAIN}"
-        token: "your_homeassistant_token"  # Replace with your Home Assistant token
+      type: homeassistant
+      url: https://homeassistant.${DOMAIN}
+      key: ${HOMEASSISTANT_API_KEY}
 
-  # Jellyfin
-  - name: "Jellyfin"
-    icon: "jellyfin"
-    href: "https://jellyfin.${DOMAIN}"
-    group: "Media"
-    description: "Media server"
-    widget:
-      type: "jellyfin"
-      config:
-        url: "https://jellyfin.${DOMAIN}"
-        token: "your_jellyfin_token"  # Replace with your Jellyfin token
+  - name: Syncthing
+    icon: syncthing.png
+    href: https://syncthing.${DOMAIN}
+    description: File synchronization
+    group: File Management
 
-  # Calibre
-  - name: "Calibre"
-    icon: "book"
-    href: "https://calibre.${DOMAIN}"
-    group: "Media"
-    description: "E-book management"
+  - name: Jellyfin
+    icon: jellyfin.png
+    href: https://jellyfin.${DOMAIN}
+    description: Media server
+    group: Media
 
-  # Syncthing
-  - name: "Syncthing"
-    icon: "sync"
-    href: "https://syncthing.${DOMAIN}"
-    group: "File Management"
-    description: "File synchronization"
+  - name: Calibre
+    icon: calibre.png
+    href: https://calibre.${DOMAIN}
+    description: E-book management
+    group: Media
 
-  # Pi-hole
-  - name: "Pi-hole"
-    icon: "shield"
-    href: "https://pihole.${DOMAIN}"
-    group: "Network"
-    description: "Network-wide ad blocking"
-    widget:
-      type: "pihole"
-      config:
-        url: "https://pihole.${DOMAIN}"
-        token: "your_pihole_token"  # Replace with your Pi-hole token
+  - name: Pi-hole
+    icon: pihole.png
+    href: https://pihole.${DOMAIN}
+    description: Network-wide ad blocking
+    group: Network
 
-  # Homepage
-  - name: "Homepage"
-    icon: "home"
-    href: "https://homepage.${DOMAIN}"
-    description: "Dashboard homepage" 
+  - name: Traefik
+    icon: traefik.png
+    href: https://traefik.${DOMAIN}
+    description: Reverse proxy dashboard
+    group: Infrastructure
+
+widgets:
+  - type: system
+    title: System Status
+    refreshInterval: 60
+
+  - type: homeassistant
+    title: Home Assistant
+    url: https://homeassistant.${DOMAIN}
+    key: ${HOMEASSISTANT_API_KEY}
+    refreshInterval: 60
+
+  - type: pihole
+    title: Pi-hole Stats
+    url: https://pihole.${DOMAIN}
+    refreshInterval: 60 

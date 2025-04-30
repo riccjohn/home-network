@@ -1,214 +1,203 @@
-# Secure Home Server with Docker Compose and Traefik
+# Secure Home Server
 
-A secure, containerized home server setup using Docker Compose and Traefik for reverse proxying and HTTPS termination. This setup provides secure external access to various self-hosted services through HTTPS and subdomains.
+A secure, containerized home server setup using Docker Compose, Traefik, and various self-hosted services. This project provides a robust foundation for running personal services with secure external access via HTTPS and subdomains.
 
-## ⚠️ Security Notice
+## ⚠️ Security First
 
-This setup exposes services to the internet. While we implement strong security measures, please understand the risks and consider alternatives like VPNs for even more secure access.
+This setup is designed with security as a top priority. Key security features include:
+- HTTPS encryption for all services using Let's Encrypt certificates
+- Secure Traefik dashboard access
+- Proper network isolation
+- Regular security updates
+- Firewall configuration recommendations
 
-## Prerequisites
+**IMPORTANT:** Before proceeding, ensure you understand the security implications of exposing services to the internet. Consider using a VPN for additional security.
+
+## 🚀 Features
+
+- **Containerized Services:**
+  - Home Assistant (Home automation)
+  - Syncthing (File synchronization)
+  - Jellyfin (Media server)
+  - Calibre (E-book management)
+  - Pi-hole (Network-wide ad blocking)
+  - Homepage (Dashboard)
+
+- **Infrastructure:**
+  - Docker Compose for service orchestration
+  - Traefik as reverse proxy with automatic HTTPS
+  - Subdomain-based routing
+  - Automatic Let's Encrypt certificate management
+
+- **Developer Experience:**
+  - VS Code configuration
+  - Prettier for code formatting
+  - Husky for git hooks
+  - asdf for version management
+  - pnpm for package management
+  - GitHub Actions for CI
+
+## 📋 Prerequisites
 
 - Ubuntu Server (latest LTS recommended)
 - SSH access to the server
-- Git
-- Docker and Docker Compose
+- Git installed
+- Docker and Docker Compose installed
 - A real domain name (e.g., `yourdomain.com`)
-- Control over your domain's DNS settings
-- Control over your router's port forwarding settings
-- Basic understanding of Linux, Docker, and networking concepts
+- Control over DNS settings
+- asdf version manager installed
+- Port forwarding capability on your router (TCP 80 and 443)
 
-## Project Structure
+## 🛠️ Developer Setup
 
-```text
-my-home-server/
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-├── traefik/
-│   └── traefik.yml
-├── homepage/
-│   └── config/
-│       ├── settings.yaml
-│       └── services.yaml
-├── service-configs/
-│   ├── homeassistant/
-│   ├── syncthing/
-│   ├── jellyfin/
-│   ├── calibre/
-│   └── pihole/
-├── scripts/
-│   ├── deploy.sh
-│   ├── teardown.sh
-│   └── update.sh
-├── docker-compose.yml
-├── env.example
-└── README.md
-```
-
-## Setup Instructions
-
-### 1. Initial Server Setup
-
-1. **SSH Hardening**
+1. **Install asdf:**
    ```bash
-   # On your local machine
-   ssh-keygen -t ed25519
-   ssh-copy-id your_username@your_server_ip
+   git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0
+   echo '. "$HOME/.asdf/asdf.sh"' >> ~/.bashrc
+   source ~/.bashrc
    ```
 
-2. **Firewall Configuration**
+2. **Install Node.js:**
    ```bash
-   sudo ufw allow 22/tcp
-   sudo ufw allow 80/tcp
-   sudo ufw allow 443/tcp
-   sudo ufw enable
+   asdf plugin add nodejs
+   asdf install
    ```
 
-### 2. Project Setup
-
-1. **Clone the Repository**
+3. **Install pnpm:**
    ```bash
-   git clone https://github.com/yourusername/my-home-server.git
-   cd my-home-server
+   npm install -g pnpm
    ```
 
-2. **Configure Environment**
+4. **Install Project Dependencies:**
+   ```bash
+   pnpm install
+   ```
+
+5. **VS Code Setup:**
+   - Install recommended extensions from `.vscode/extensions.json`
+   - Enable format on save
+   - Configure Prettier as default formatter
+
+## 🖥️ Server Setup
+
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/riccjohn/home-network
+   cd home-network
+   ```
+
+2. **Configure Environment:**
    ```bash
    cp env.example .env
-   nvim .env  # Edit with your values
+   # Edit .env with your configuration
    ```
 
-3. **DNS Configuration**
-   - Create A/AAAA records for each subdomain:
-     - `homepage.yourdomain.com`
-     - `homeassistant.yourdomain.com`
-     - `syncthing.yourdomain.com`
-     - `jellyfin.yourdomain.com`
-     - `calibre.yourdomain.com`
-     - `pihole.yourdomain.com`
-   - Point all records to your public IP address
+3. **Initial Deployment:**
+   ```bash
+   chmod +x scripts/deploy.sh
+   ./scripts/deploy.sh
+   ```
 
-4. **Port Forwarding**
-   - Forward TCP ports 80 and 443 to your server's internal IP
-   - Consider restricting source IPs if possible
+## 🌐 DNS Configuration
 
-### 3. Service Configuration
+### External DNS
+1. Create A/AAAA records for each subdomain:
+   ```
+   dashboard.yourdomain.com -> your_public_ip
+   homeassistant.yourdomain.com -> your_public_ip
+   syncthing.yourdomain.com -> your_public_ip
+   jellyfin.yourdomain.com -> your_public_ip
+   calibre.yourdomain.com -> your_public_ip
+   pihole.yourdomain.com -> your_public_ip
+   ```
 
-1. **Traefik Configuration**
-   - Review `traefik/traefik.yml` for security settings
-   - Ensure Let's Encrypt email is set in `.env`
+### Internal DNS
+1. Configure Pi-hole to resolve your domain internally
+2. Add local DNS entries pointing to your server's internal IP
 
-2. **Homepage Dashboard**
-   - Configure services in `homepage/config/services.yaml`
-   - Customize appearance in `homepage/config/settings.yaml`
+## 🔒 Port Forwarding
 
-3. **Service-Specific Configs**
-   - Each service has its own directory under `service-configs/`
-   - Review and customize as needed
+1. Forward these ports to your server's internal IP:
+   - TCP 80 (HTTP)
+   - TCP 443 (HTTPS)
 
-### 4. Deployment
+**WARNING:** Only forward necessary ports. Consider using a VPN for additional security.
 
+## 📦 Service Configuration
+
+Each service has its configuration directory under `service-configs/`:
+- `homeassistant/`: Home Assistant configuration
+- `syncthing/`: Syncthing configuration
+- `jellyfin/`: Jellyfin configuration
+- `calibre/`: Calibre configuration
+- `pihole/`: Pi-hole configuration
+
+The Homepage dashboard configuration is in `homepage/config/`.
+
+## 🛠️ Scripts
+
+- `deploy.sh`: Initial deployment and service startup
+- `teardown.sh`: Stop and remove all services
+- `update.sh`: Update all services to latest versions
+
+## 🔒 Security Considerations
+
+### SSH Hardening
+1. Disable password authentication
+2. Use SSH keys
+3. Change default SSH port
+4. Enable fail2ban
+
+### Firewall (UFW)
 ```bash
-# Make scripts executable
-chmod +x scripts/*.sh
-
-# Deploy services
-./scripts/deploy.sh
+sudo ufw allow ssh
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw enable
 ```
 
-## Security Considerations
-
-### 1. SSH Security
-- Use key-based authentication only
-- Disable password authentication
-- Consider changing the default SSH port
-- Use fail2ban for additional protection
-
-### 2. Firewall
-- Only allow necessary ports (22, 80, 443)
-- Consider restricting source IPs
-- Regularly review firewall rules
-
-### 3. Traefik Security
-- Dashboard access is restricted to local network
-- API is disabled by default
-- All services use HTTPS
-- Let's Encrypt certificates are automatically managed
-
-### 4. Service Security
-- Each service runs in its own container
-- Services are isolated from each other
-- Regular updates are recommended
-- Implement proper authentication for each service
-
-### 5. Pi-hole Considerations
-- DNS (port 53) requires special handling
-- Web interface is accessible via Traefik
-- Consider restricting DNS access to local network
-
-## Maintenance
+### Traefik Dashboard
+- Access restricted via middleware
+- Basic authentication enabled
+- HTTPS enforced
 
 ### Regular Updates
-```bash
-./scripts/update.sh
-```
+- Enable automatic security updates
+- Regularly update Docker images
+- Monitor for security advisories
 
-### Backup Strategy
-1. Regular backups of:
-   - Service configurations
-   - Docker volumes
-   - Environment files
-2. Test restore procedures periodically
+### Backups
+- Implement regular backups of service data
+- Store backups securely
+- Test restore procedures
 
-### Monitoring
-- Set up monitoring for:
-  - Container health
-  - Certificate expiration
-  - Disk space
-  - System resources
+## 🔄 Maintenance
 
-## Troubleshooting
+1. **Regular Updates:**
+   ```bash
+   ./scripts/update.sh
+   ```
 
-### Common Issues
+2. **Monitoring:**
+   - Check service logs
+   - Monitor disk space
+   - Review security logs
 
-1. **Certificate Issues**
-   - Check DNS propagation
-   - Verify port forwarding
-   - Review Traefik logs
-
-2. **Service Access**
-   - Check container status
-   - Verify Traefik labels
-   - Review service logs
-
-3. **DNS Resolution**
-   - Verify Pi-hole configuration
-   - Check local DNS settings
-   - Test with different DNS servers
-
-## Alternative Access Methods
-
-While this setup uses HTTPS and subdomains for external access, consider these alternatives for enhanced security:
-
-1. **VPN Solutions**
-   - WireGuard
-   - Tailscale
-   - OpenVPN
-
-2. **SSH Tunneling**
-   - For temporary access
-   - Specific service access
-
-## License
-
-MIT License - See LICENSE file for details
-
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
-3. Submit a pull request
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
-## Support
+## 📝 License
 
-For issues and feature requests, please use the GitHub issue tracker. 
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- [Traefik](https://traefik.io/)
+- [Docker](https://www.docker.com/)
+- [Let's Encrypt](https://letsencrypt.org/)
+- All service maintainers 

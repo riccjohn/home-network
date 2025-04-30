@@ -1,0 +1,8 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "Running Prettier..."
+pnpm exec prettier --write .
+
+echo "Adding formatted files..."
+git add . 
