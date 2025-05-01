@@ -13,7 +13,7 @@ docker compose down
 
 # Remove network
 echo "Removing network..."
-docker network rm ${DOCKER_NETWORK:-home-server-network} || true
+docker network rm "${DOCKER_NETWORK:-home-server-network}" || true
 
 echo "Teardown complete! All services have been stopped and removed."
 echo "Note: Configuration files in service-configs/ have been preserved." 

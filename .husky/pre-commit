@@ -1,8 +1,13 @@
 #!/bin/sh
+
+# shellcheck disable=SC1091
 . "$(dirname "$0")/_/husky.sh"
 
 echo "Running Prettier..."
 pnpm exec prettier --write .
+
+echo "Running ShellCheck..."
+pnpm run lint:shell
 
 echo "Adding formatted files..."
 git add . 

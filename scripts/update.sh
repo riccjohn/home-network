@@ -10,6 +10,7 @@ if [ ! -f .env ]; then
 fi
 
 # Load environment variables
+# shellcheck disable=SC1091
 source .env
 
 # Pull latest images

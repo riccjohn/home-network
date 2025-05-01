@@ -12,25 +12,25 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up asdf
-        uses: asdf-vm/actions/setup@v2
-        with:
-          asdf_version: v0.16.0
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4.1.0
 
-      - name: Install Node.js
+      - name: Read Node.js version
+        id: node-version
         run: |
-          asdf plugin add nodejs
-          asdf install
-          asdf reshim
+          NODE_VERSION=$(grep 'nodejs' .tool-versions | cut -d' ' -f2)
+          echo "node_version=${NODE_VERSION}" >> $GITHUB_OUTPUT
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node-version.outputs.node_version }}
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Check formatting
         run: pnpm exec prettier --check .
 
       - name: Validate docker-compose.yml
-        run: docker compose config
+        run: docker compose --env-file .env.ci config
