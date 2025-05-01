@@ -54,4 +54,4 @@ widgets:
   - type: pihole
     title: Pi-hole Stats
     url: https://pihole.${DOMAIN}
-    refreshInterval: 60 
+    refreshInterval: 60

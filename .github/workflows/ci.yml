@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   validate:
@@ -33,4 +33,4 @@ jobs:
         run: pnpm exec prettier --check .
 
       - name: Validate docker-compose.yml
-        run: docker compose config 
+        run: docker compose config

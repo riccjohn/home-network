@@ -5,6 +5,7 @@ A secure, containerized home server setup using Docker Compose, Traefik, and var
 ## ⚠️ Security First
 
 This setup is designed with security as a top priority. Key security features include:
+
 - HTTPS encryption for all services using Let's Encrypt certificates
 - Secure Traefik dashboard access
 - Proper network isolation
@@ -16,6 +17,7 @@ This setup is designed with security as a top priority. Key security features in
 ## 🚀 Features
 
 - **Containerized Services:**
+
   - Home Assistant (Home automation)
   - Syncthing (File synchronization)
   - Jellyfin (Media server)
@@ -24,6 +26,7 @@ This setup is designed with security as a top priority. Key security features in
   - Homepage (Dashboard)
 
 - **Infrastructure:**
+
   - Docker Compose for service orchestration
   - Traefik as reverse proxy with automatic HTTPS
   - Subdomain-based routing
@@ -51,6 +54,7 @@ This setup is designed with security as a top priority. Key security features in
 ## 🛠️ Developer Setup
 
 1. **Install asdf:**
+
    ```bash
    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0
    echo '. "$HOME/.asdf/asdf.sh"' >> ~/.bashrc
@@ -58,17 +62,20 @@ This setup is designed with security as a top priority. Key security features in
    ```
 
 2. **Install Node.js:**
+
    ```bash
    asdf plugin add nodejs
    asdf install
    ```
 
 3. **Install pnpm:**
+
    ```bash
    npm install -g pnpm
    ```
 
 4. **Install Project Dependencies:**
+
    ```bash
    pnpm install
    ```
@@ -81,12 +88,14 @@ This setup is designed with security as a top priority. Key security features in
 ## 🖥️ Server Setup
 
 1. **Clone the Repository:**
+
    ```bash
    git clone https://github.com/riccjohn/home-network
    cd home-network
    ```
 
 2. **Configure Environment:**
+
    ```bash
    cp env.example .env
    # Edit .env with your configuration
@@ -101,6 +110,7 @@ This setup is designed with security as a top priority. Key security features in
 ## 🌐 DNS Configuration
 
 ### External DNS
+
 1. Create A/AAAA records for each subdomain:
    ```
    dashboard.yourdomain.com -> your_public_ip
@@ -112,6 +122,7 @@ This setup is designed with security as a top priority. Key security features in
    ```
 
 ### Internal DNS
+
 1. Configure Pi-hole to resolve your domain internally
 2. Add local DNS entries pointing to your server's internal IP
 
@@ -126,6 +137,7 @@ This setup is designed with security as a top priority. Key security features in
 ## 📦 Service Configuration
 
 Each service has its configuration directory under `service-configs/`:
+
 - `homeassistant/`: Home Assistant configuration
 - `syncthing/`: Syncthing configuration
 - `jellyfin/`: Jellyfin configuration
@@ -143,12 +155,14 @@ The Homepage dashboard configuration is in `homepage/config/`.
 ## 🔒 Security Considerations
 
 ### SSH Hardening
+
 1. Disable password authentication
 2. Use SSH keys
 3. Change default SSH port
 4. Enable fail2ban
 
 ### Firewall (UFW)
+
 ```bash
 sudo ufw allow ssh
 sudo ufw allow 80/tcp
@@ -157,16 +171,19 @@ sudo ufw enable
 ```
 
 ### Traefik Dashboard
+
 - Access restricted via middleware
 - Basic authentication enabled
 - HTTPS enforced
 
 ### Regular Updates
+
 - Enable automatic security updates
 - Regularly update Docker images
 - Monitor for security advisories
 
 ### Backups
+
 - Implement regular backups of service data
 - Store backups securely
 - Test restore procedures
@@ -174,6 +191,7 @@ sudo ufw enable
 ## 🔄 Maintenance
 
 1. **Regular Updates:**
+
    ```bash
    ./scripts/update.sh
    ```
@@ -200,4 +218,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [Traefik](https://traefik.io/)
 - [Docker](https://www.docker.com/)
 - [Let's Encrypt](https://letsencrypt.org/)
-- All service maintainers 
+- All service maintainers

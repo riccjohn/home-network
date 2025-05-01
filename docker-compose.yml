@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 # Define networks
 networks:
@@ -18,8 +18,8 @@ services:
     networks:
       - traefik-public
     ports:
-      - "80:80"     # HTTP
-      - "443:443"   # HTTPS
+      - "80:80" # HTTP
+      - "443:443" # HTTPS
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -159,4 +159,4 @@ services:
       - "traefik.http.routers.pihole.rule=Host(`pihole.${DOMAIN}`)"
       - "traefik.http.routers.pihole.entrypoints=websecure"
       - "traefik.http.routers.pihole.tls=true"
-      - "traefik.http.services.pihole.loadbalancer.server.port=${PIHOLE_ADMIN_PORT:-8080}" 
+      - "traefik.http.services.pihole.loadbalancer.server.port=${PIHOLE_ADMIN_PORT:-8080}"

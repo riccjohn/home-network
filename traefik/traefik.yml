@@ -70,4 +70,4 @@ accessLog:
         User-Agent: keep
         Authorization: drop
         Cookie: drop
-        Set-Cookie: drop 
+        Set-Cookie: drop
