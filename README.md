@@ -36,9 +36,45 @@ See [PLANNING.md](./PLANNING.md) for the complete implementation plan, including
 
 ## Current Status
 
-🚧 **Planning Phase** - See [PLANNING.md](./PLANNING.md) for implementation roadmap.
+✅ **Phase 1: Pi-hole MVP** - Ready for deployment
+
+See [PLANNING.md](./PLANNING.md) for the complete implementation roadmap.
+
+## Services
+
+### Pi-hole
+
+Network-wide DNS and ad-blocking service.
+
+**Quick Setup:**
+1. Run `./setup.sh` (auto-detects server IP)
+2. Configure router DHCP DNS to use your server IP
+3. Start: `docker compose up -d`
+4. Access: `http://YOUR_SERVER_IP/admin`
+
+**Documentation:**
+- [Pi-hole Setup & Configuration](./docs/pihole-setup.md)
+- [Pi-hole Troubleshooting](./docs/pihole-troubleshooting.md)
+
+**Scripts:**
+- `scripts/pihole/test-pihole.sh` - Test Pi-hole functionality
+- `scripts/pihole/diagnose-pihole.sh` - Network diagnostic tool
+- `scripts/pihole/update-server-ip.sh` - Update server IP in .env
+
+## Project Structure
+
+```
+home-network/
+├── docker-compose.yml      # Main orchestration file
+├── .env                    # Environment variables (gitignored)
+├── setup.sh                # Initial setup script
+├── docs/                   # Service-specific documentation
+│   └── pihole-*.md
+├── scripts/                # Service-specific scripts
+│   └── pihole/
+└── [service]/             # Service data directories
+```
 
 ## License
 
 [Add your license here]
-

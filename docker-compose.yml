@@ -1,0 +1,30 @@
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    hostname: pihole
+    domainname: ${DOMAIN:-home.local}
+    network_mode: host
+    environment:
+      # Timezone (configure via TZ in .env file, e.g., TZ=America/New_York, TZ=Europe/London)
+      TZ: ${TZ:-America/New_York}
+      # Pi-hole password
+      FTLCONF_webserver_api_password: ${PIHOLE_PASSWORD:-changeme}
+      WEBPASSWORD: ${PIHOLE_PASSWORD:-changeme}
+      # DNS Settings
+      PIHOLE_DNS: ${PIHOLE_DNS:-8.8.8.8;1.1.1.1}
+      # Set the IP of the host machine for Pi-hole to know its own address
+      # Configure via SERVER_IP in .env file (e.g., SERVER_IP=192.168.0.243)
+      SERVERIP: ${SERVER_IP:-192.168.0.243}
+      # Interface settings - 'eth0' is often correct on Linux hosts
+      INTERFACE: eth0 
+      # IPv6 settings (disable if not needed)
+      IPv6: "false"
+      # Admin interface settings
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+    volumes:
+      - ./pihole/etc:/etc/pihole
+      - ./pihole/etc-dnsmasq.d:/etc/dnsmasq.d
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
