@@ -134,18 +134,6 @@ else
 fi
 
 echo ""
-
-# Generate DNS configuration from .env
-if [ -f .env ] && [ -n "$SERVER_IP" ] && [ "$SERVER_IP" != "" ]; then
-    echo "📝 Generating DNS configuration from .env..."
-    if [ -f scripts/pihole/update-dns-config.sh ]; then
-        bash scripts/pihole/update-dns-config.sh
-    else
-        echo -e "${YELLOW}⚠️  DNS config script not found, skipping DNS config generation${NC}"
-    fi
-fi
-
-echo ""
 echo -e "${GREEN}✅ Setup complete!${NC}"
 echo ""
 echo "📋 Next Steps:"

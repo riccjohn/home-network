@@ -52,11 +52,12 @@ Get Pi-hole up and running as the network's DNS server with ad-blocking capabili
 
 ### Objectives
 
-- [ ] Set up Pi-hole container in docker-compose
-- [ ] Configure Docker network for Pi-hole
-- [ ] Configure router to use Pi-hole as DNS server
-- [ ] Verify ad-blocking is working across network
-- [ ] Test DNS resolution from multiple devices
+- [x] Set up Pi-hole container in docker-compose
+- [x] Configure Docker network for Pi-hole
+- [x] Configure router to use Pi-hole as DNS server
+- [x] Verify ad-blocking is working across network
+- [x] Test DNS resolution from multiple devices
+- [ ] Local domain name resolution (will be configured in Phase 3 with Traefik)
 
 ### Implementation Details
 
@@ -75,18 +76,25 @@ Get Pi-hole up and running as the network's DNS server with ad-blocking capabili
 
 **Testing Checklist:**
 
-- [ ] Pi-hole web interface accessible
-- [ ] DNS queries resolve correctly
-- [ ] Ad-blocking works (test with known ad domains)
-- [ ] All devices on network using Pi-hole DNS
-- [ ] Query logs visible in Pi-hole dashboard
+- [x] Pi-hole web interface accessible (via IP: `http://192.168.0.243/admin`)
+- [x] DNS queries resolve correctly
+- [x] Ad-blocking works (test with known ad domains)
+- [x] All devices on network using Pi-hole DNS
+- [x] Query logs visible in Pi-hole dashboard
+
+**Note on Domain Names:**
+
+- Currently accessing Pi-hole via IP address (`http://192.168.0.243/admin`)
+- Local domain name resolution (e.g., `newton.local`) will be configured in Phase 3 with Traefik
+- DNS configuration will be handled through Pi-hole's web interface or `custom.list` file when needed
 
 **Success Criteria:**
 
-- All network devices automatically use Pi-hole for DNS
-- Ad-blocking is active and working
-- Pi-hole dashboard shows queries from network devices
-- No DNS resolution issues
+- ✅ All network devices automatically use Pi-hole for DNS
+- ✅ Ad-blocking is active and working
+- ✅ Pi-hole dashboard shows queries from network devices
+- ✅ No DNS resolution issues for external domains
+- ⏳ Local domain names will be configured in Phase 3
 
 ---
 
@@ -166,9 +174,9 @@ Implement Traefik as a reverse proxy to access services via friendly domain name
 - Docker provider enabled
 - Entrypoints: HTTP (80), HTTPS (443)
 - Router rules for each service:
-  - `homepage.home.local` → Homepage
-  - `pihole.home.local` → Pi-hole
-  - `traefik.home.local` → Traefik dashboard
+  - `homepage.newton.local` → Homepage
+  - `pihole.newton.local` → Pi-hole
+  - `traefik.newton.local` → Traefik dashboard
 - Middleware for security headers
 
 **Service Labels (Example):**
@@ -176,13 +184,17 @@ Implement Traefik as a reverse proxy to access services via friendly domain name
 ```yaml
 labels:
   - "traefik.enable=true"
-  - "traefik.http.routers.homepage.rule=Host(`homepage.home.local`)"
+  - "traefik.http.routers.homepage.rule=Host(`homepage.newton.local`)"
   - "traefik.http.routers.homepage.entrypoints=web"
 ```
 
 **DNS Configuration:**
 
-- Router DNS or `/etc/hosts` entries for `*.home.local`
+- Configure Pi-hole to resolve `*.newton.local` to server IP (192.168.0.243)
+- Add wildcard DNS entry via Pi-hole web interface (Local DNS Records) or directly in `pihole/etc/custom.list`:
+  - Format: `.newton.local 192.168.0.243` (wildcard for all subdomains)
+  - Or add individual entries: `pihole.newton.local 192.168.0.243`, `homepage.newton.local 192.168.0.243`, etc.
+- Alternative: Router DNS entries or `/etc/hosts` entries for `*.newton.local`
 - Or use mDNS/Bonjour for automatic discovery
 
 **Testing Checklist:**
@@ -213,14 +225,14 @@ Add more self-hosted services to the home network setup.
 #### Jellyfin (Media Server)
 
 - **Purpose:** Media streaming and management
-- **Access:** `jellyfin.home.local`
+- **Access:** `jellyfin.newton.local`
 - **Requirements:** Media storage volumes, GPU passthrough (optional)
 - **Integration:** Homepage widget for media stats
 
 #### Syncthing (File Synchronization)
 
 - **Purpose:** File sync across devices
-- **Access:** `syncthing.home.local`
+- **Access:** `syncthing.newton.local`
 - **Requirements:** Data volumes for synced folders
 - **Integration:** Homepage link, status widget
 
@@ -331,10 +343,15 @@ For each new service:
 
 ### Domain Resolution
 
-- **Option 1:** Router DNS entries for `*.home.local`
-- **Option 2:** `/etc/hosts` entries on each device
-- **Option 3:** mDNS/Bonjour for automatic discovery
-- **Option 4:** Local DNS server (Pi-hole can handle this)
+- **Current Status:** Services accessed via IP addresses (e.g., `http://192.168.0.243/admin`)
+- **Phase 3 Approach:** Configure Pi-hole to resolve `*.newton.local` to server IP
+  - Add wildcard entry via Pi-hole web interface or directly in `pihole/etc/custom.list`:
+    - Format: `.newton.local 192.168.0.243` (wildcard for all subdomains)
+  - Traefik will handle routing based on subdomain (e.g., `pihole.newton.local`)
+- **Alternative Options:**
+  - Router DNS entries for `*.newton.local`
+  - `/etc/hosts` entries on each device
+  - mDNS/Bonjour for automatic discovery
 
 ### Port Requirements
 
@@ -360,8 +377,12 @@ home-network/
 │   ├── traefik.yml           # Traefik static config
 │   └── letsencrypt/          # SSL certificates
 ├── pihole/
-│   ├── etc/                  # Pi-hole config
-│   └── etc-dnsmasq.d/        # DNSmasq config
+│   ├── etc/                  # Pi-hole config (includes custom.list for local DNS)
+│   └── etc-dnsmasq.d/        # DNSmasq config (optional, for advanced configs)
+├── scripts/
+│   └── pihole/
+│       ├── update-server-ip.sh   # Update server IP in .env
+│       └── test-pihole.sh        # Test Pi-hole functionality
 ├── homepage/
 │   └── config/               # Homepage config files
 ├── jellyfin/
@@ -381,7 +402,8 @@ home-network/
 
 - ✅ Network-wide ad-blocking active
 - ✅ All devices using Pi-hole DNS
-- ✅ Pi-hole dashboard accessible and functional
+- ✅ Pi-hole dashboard accessible and functional (via IP: `http://192.168.0.243/admin`)
+- ⏳ Domain name access will be added in Phase 3 with Traefik
 
 ### Phase 2 Success
 
@@ -436,5 +458,5 @@ home-network/
 
 ---
 
-**Last Updated:** 2025-01-27
-**Status:** Planning Phase
+**Last Updated:** 2025-11-30
+**Status:** Phase 1 Complete, Phase 2 Next
