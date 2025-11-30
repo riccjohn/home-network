@@ -120,15 +120,29 @@ if [ -n "$SERVER_IP" ] && [ "$SERVER_IP" != "" ]; then
             echo -e "${GREEN}✅ Updated SERVER_IP in .env file${NC}"
         else
             # Add SERVER_IP to .env
-            echo "" >> .env
-            echo "# Server IP (auto-detected)" >> .env
-            echo "SERVER_IP=$SERVER_IP" >> .env
+            {
+                echo ""
+                echo "# Server IP (auto-detected)"
+                echo "SERVER_IP=$SERVER_IP"
+            } >> .env
             echo -e "${GREEN}✅ Added SERVER_IP to .env file${NC}"
         fi
     fi
 else
     echo -e "${YELLOW}⚠️  Could not detect server IP automatically${NC}"
     echo -e "${YELLOW}   You'll need to set SERVER_IP manually in .env file${NC}"
+fi
+
+echo ""
+
+# Generate DNS configuration from .env
+if [ -f .env ] && [ -n "$SERVER_IP" ] && [ "$SERVER_IP" != "" ]; then
+    echo "📝 Generating DNS configuration from .env..."
+    if [ -f scripts/pihole/update-dns-config.sh ]; then
+        bash scripts/pihole/update-dns-config.sh
+    else
+        echo -e "${YELLOW}⚠️  DNS config script not found, skipping DNS config generation${NC}"
+    fi
 fi
 
 echo ""
