@@ -1,25 +1,24 @@
-# Environment variables
-.env
-
 # Node.js
 node_modules/
-.pnpm-store/
+.pnpm_store/
+
+# Environment files
+.env
 
 # Docker
 .docker/
 docker-compose.override.yml
 
-# Traefik
-traefik/acme.json
+# Docker volumes and data
+pihole/
+syncthing/
+jellyfin/
+traefik/letsencrypt/
+media/
 
-# Service data
-service-configs/
-homepage/data/
+# Homepage config (contains personal data)
+homepage/config/
 
-# IDE
-*.swp
-*.swo
-
-# OS
+# OS files
 .DS_Store
-Thumbs.db 
+Thumbs.db

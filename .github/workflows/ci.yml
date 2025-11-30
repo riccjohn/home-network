@@ -27,10 +27,17 @@ jobs:
           node-version: ${{ steps.node-version.outputs.node_version }}
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Check formatting
         run: pnpm exec prettier --check .
 
       - name: Validate docker-compose.yml
-        run: docker compose --env-file .env.ci config
+        env:
+          DOMAIN: test.local
+          TZ: UTC
+          PIHOLE_PASSWORD: test-password
+          PIHOLE_DNS: 8.8.8.8;1.1.1.1
+          SERVER_IP: 127.0.0.1
+          ADMIN_EMAIL: test@example.com
+        run: docker compose config

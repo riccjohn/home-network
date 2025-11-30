@@ -1,13 +1,12 @@
 #!/bin/sh
 
-# shellcheck disable=SC1091
-. "$(dirname "$0")/_/husky.sh"
+if [ "$SKIP_SIMPLE_GIT_HOOKS" = "1" ]; then
+    echo "[INFO] SKIP_SIMPLE_GIT_HOOKS is set to 1, skipping hook."
+    exit 0
+fi
 
-echo "Running Prettier..."
-pnpm exec prettier --write .
+if [ -f "$SIMPLE_GIT_HOOKS_RC" ]; then
+    . "$SIMPLE_GIT_HOOKS_RC"
+fi
 
-echo "Running ShellCheck..."
-pnpm run lint:shell
-
-echo "Adding formatted files..."
-git add . 
+pnpm pretty-quick --staged
