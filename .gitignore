@@ -1,5 +1,13 @@
+# Node.js
+node_modules/
+.pnpm_store/
+
 # Environment files
 .env
+
+# Docker
+.docker/
+docker-compose.override.yml
 
 # Docker volumes and data
 pihole/
