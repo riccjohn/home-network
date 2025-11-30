@@ -5,6 +5,7 @@ A self-hosted home network server setup running on Ubuntu Server, managed entire
 ## Overview
 
 This project provides a complete home network infrastructure including:
+
 - **Pi-hole** - Network-wide DNS and ad-blocking
 - **Homepage** - Service dashboard and navigation hub
 - **Traefik** - Reverse proxy for easy service access
@@ -15,6 +16,7 @@ All services are accessible from devices across the network (Linux, Android, TVs
 ## Planning
 
 See [PLANNING.md](./PLANNING.md) for the complete implementation plan, including:
+
 - Phased rollout strategy
 - Architecture overview
 - Security considerations
@@ -47,16 +49,19 @@ See [PLANNING.md](./PLANNING.md) for the complete implementation roadmap.
 Network-wide DNS and ad-blocking service.
 
 **Quick Setup:**
+
 1. Run `./setup.sh` (auto-detects server IP)
 2. Configure router DHCP DNS to use your server IP
 3. Start: `docker compose up -d`
 4. Access: `http://YOUR_SERVER_IP/admin`
 
 **Documentation:**
+
 - [Pi-hole Setup & Configuration](./docs/pihole-setup.md)
 - [Pi-hole Troubleshooting](./docs/pihole-troubleshooting.md)
 
 **Scripts:**
+
 - `scripts/pihole/test-pihole.sh` - Test Pi-hole functionality
 - `scripts/pihole/diagnose-pihole.sh` - Network diagnostic tool
 - `scripts/pihole/update-server-ip.sh` - Update server IP in .env

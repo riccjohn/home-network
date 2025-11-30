@@ -17,7 +17,7 @@ services:
       # Configure via SERVER_IP in .env file (e.g., SERVER_IP=192.168.0.243)
       SERVERIP: ${SERVER_IP:-192.168.0.243}
       # Interface settings - 'eth0' is often correct on Linux hosts
-      INTERFACE: eth0 
+      INTERFACE: eth0
       # IPv6 settings (disable if not needed)
       IPv6: "false"
       # Admin interface settings
