@@ -10,7 +10,9 @@ node_modules/
 docker-compose.override.yml
 
 # Docker volumes and data
-pihole/
+# Pi-hole: ignore runtime data, but track configuration files
+pihole/etc/
+pihole/etc-dnsmasq.d/*.conf.bak
 syncthing/
 jellyfin/
 traefik/letsencrypt/
