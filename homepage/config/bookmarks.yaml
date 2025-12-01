@@ -6,13 +6,20 @@
     - Github:
         - abbr: GH
           href: https://github.com/riccjohn
+          icon: github
+
+- Personal:
+    - Blog:
+        - abbr: AG
+          href: https://arcanegrain.dev
+          icon: mdi-ghost
+    - Email:
+        - abbr: FM
+          href: https://fastmail.com
+          icon: fastmail
 
 - Social:
-    - Reddit:
-        - abbr: RE
-          href: https://reddit.com/
-
-- Entertainment:
-    - YouTube:
-        - abbr: YT
-          href: https://youtube.com/
+    - Bluesky:
+        - abbr: BS
+          href: https://bsky.app
+          icon: bluesky
