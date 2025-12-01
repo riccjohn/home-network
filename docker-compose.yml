@@ -28,3 +28,19 @@ services:
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
+
+  homepage:
+    container_name: homepage
+    image: ghcr.io/gethomepage/homepage:latest
+    hostname: homepage
+    domainname: ${DOMAIN:-home.local}
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./homepage/config:/app/config
+    environment:
+      - TZ=${TZ:-America/New_York}
+      # Allow requests from server IP (required for network access)
+      # Format: host:port (e.g., 192.168.0.243:3000)
+      - HOMEPAGE_ALLOWED_HOSTS=${SERVER_IP:-192.168.0.243}:3000
+    restart: unless-stopped

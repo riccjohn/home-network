@@ -13,13 +13,9 @@ docker-compose.override.yml
 # Pi-hole: ignore runtime data, but track configuration files
 pihole/etc/
 pihole/etc-dnsmasq.d/*.conf.bak
-syncthing/
-jellyfin/
-traefik/letsencrypt/
-media/
 
-# Homepage config (contains personal data)
-homepage/config/
+# Homepage: ignore logs, but track configuration files
+homepage/config/logs/
 
 # OS files
 .DS_Store
