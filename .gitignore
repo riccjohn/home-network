@@ -14,7 +14,7 @@ docker-compose.override.yml
 pihole/etc/
 pihole/etc-dnsmasq.d/*.conf.bak
 
-# Homepage: ignore logs, but track configuration files
+# Homepage: ignore logs, but track all configuration files
 homepage/config/logs/
 
 # OS files

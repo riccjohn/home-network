@@ -1,0 +1,9 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/services/
+
+- Network Services:
+    - Pi-hole:
+        href: http://192.168.0.243/admin
+        description: Network-wide DNS and ad-blocking
+        icon: raspberry-pi
