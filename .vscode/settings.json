@@ -1,15 +1,19 @@
 {
   "cSpell.words": [
+    "AUTHKEY",
     "changeme",
     "dnsmasq",
     "fastmail",
     "FTLCONF",
+    "gethomepage",
     "Jellyfin",
     "letsencrypt",
     "pihole",
     "SERVERIP",
     "syncthing",
+    "tailnet",
     "Traefik",
+    "tskey",
     "WEBPASSWORD"
   ]
 }

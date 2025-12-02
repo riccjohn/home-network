@@ -2,13 +2,14 @@
 
 ## Overview
 
-This document outlines the phased approach to setting up a home network server running on an Ubuntu Server (ThinkCentre) that will provide various self-hosted services accessible from multiple devices (Linux, Android, TVs, Mac, iPhone, iPad, etc.).
+This document outlines the phased approach to setting up a home network server running on an Ubuntu Server that will provide various self-hosted services accessible from multiple devices (Linux, Android, TVs, Mac, iPhone, iPad, etc.) both locally on the network and securely from remote locations outside the network.
 
 **Key Requirements:**
 
 - Single `docker-compose.yml` file to manage all services
 - Good CI/CD practices built into the project
-- Services accessible from all devices on the network
+- Services accessible from all devices on the network (local access)
+- **Secure remote access to key services from outside the network** (via Tailscale VPN)
 - Secure and maintainable architecture
 
 ---
@@ -20,7 +21,7 @@ This document outlines the phased approach to setting up a home network server r
 | 1     | Pi-hole MVP             | ✅ Complete    | DNS working, ad-blocking active, accessible at 192.168.0.243/admin | Local domain names (Phase 3)                                                     |
 | 2     | Homepage Integration    | ⏳ In Progress | Service running at 192.168.0.243:3000, basic config done           | Configuration persistence verification, service status indicators, basic widgets |
 | 3     | Traefik Reverse Proxy   | 📋 Planned     | -                                                                  | All objectives pending                                                           |
-| 4     | Tailscale Remote Access | 📋 Planned     | -                                                                  | All objectives pending                                                           |
+| 4     | Tailscale Remote Access | 📋 Planned 🔑  | -                                                                  | All objectives pending - **Key Requirement: Secure remote access**               |
 | 5     | Additional Services     | 📋 Planned     | -                                                                  | Services to be determined                                                        |
 
 **Legend:**
@@ -257,7 +258,7 @@ labels:
 
 ### Goal
 
-Set up Tailscale to enable secure, encrypted remote access to all services from anywhere without exposing ports to the internet.
+**Key Requirement:** Set up Tailscale to enable secure, encrypted remote access to key services from anywhere outside the network without exposing ports to the internet. This is a core requirement for the home network server, enabling secure access to services like Homepage, Pi-hole, Code-Server, and future services (Jellyfin, etc.) from remote locations.
 
 ### Objectives
 
