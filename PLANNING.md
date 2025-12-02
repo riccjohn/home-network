@@ -15,15 +15,16 @@ This document outlines the phased approach to setting up a home network server r
 
 ## Quick Reference - Phase Status
 
-| Phase | Name | Status | Key Indicators | Outstanding Items |
-|-------|------|--------|----------------|-------------------|
-| 1 | Pi-hole MVP | ✅ Complete | DNS working, ad-blocking active, accessible at 192.168.0.243/admin | Local domain names (Phase 3) |
-| 2 | Homepage Integration | ⏳ In Progress | Service running at 192.168.0.243:3000, basic config done | Configuration persistence verification, service status indicators, basic widgets |
-| 3 | Traefik Reverse Proxy | 📋 Planned | - | All objectives pending |
-| 4 | Tailscale Remote Access | 📋 Planned | - | All objectives pending |
-| 5 | Additional Services | 📋 Planned | - | Services to be determined |
+| Phase | Name                    | Status         | Key Indicators                                                     | Outstanding Items                                                                |
+| ----- | ----------------------- | -------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| 1     | Pi-hole MVP             | ✅ Complete    | DNS working, ad-blocking active, accessible at 192.168.0.243/admin | Local domain names (Phase 3)                                                     |
+| 2     | Homepage Integration    | ⏳ In Progress | Service running at 192.168.0.243:3000, basic config done           | Configuration persistence verification, service status indicators, basic widgets |
+| 3     | Traefik Reverse Proxy   | 📋 Planned     | -                                                                  | All objectives pending                                                           |
+| 4     | Tailscale Remote Access | 📋 Planned     | -                                                                  | All objectives pending                                                           |
+| 5     | Additional Services     | 📋 Planned     | -                                                                  | Services to be determined                                                        |
 
 **Legend:**
+
 - ✅ Complete - All objectives achieved
 - ⏳ In Progress - Partially complete, work ongoing
 - 📋 Planned - Not yet started
@@ -408,7 +409,7 @@ All objectives are pending - this phase will be implemented after Phase 3 (Traef
 
 - **Purpose:** Full VSCode editor accessible via web browser for remote development
 - **Access:** `code.newton.local` (local) or via Tailscale (remote)
-- **Requirements:** 
+- **Requirements:**
   - Volume mounts for project directories
   - Persistent configuration and extensions
   - Secure authentication (password or OAuth)
