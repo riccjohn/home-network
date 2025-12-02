@@ -13,6 +13,24 @@ This document outlines the phased approach to setting up a home network server r
 
 ---
 
+## Quick Reference - Phase Status
+
+| Phase | Name                    | Status         | Key Indicators                                                     | Outstanding Items                                                                |
+| ----- | ----------------------- | -------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| 1     | Pi-hole MVP             | ✅ Complete    | DNS working, ad-blocking active, accessible at 192.168.0.243/admin | Local domain names (Phase 3)                                                     |
+| 2     | Homepage Integration    | ⏳ In Progress | Service running at 192.168.0.243:3000, basic config done           | Configuration persistence verification, service status indicators, basic widgets |
+| 3     | Traefik Reverse Proxy   | 📋 Planned     | -                                                                  | All objectives pending                                                           |
+| 4     | Tailscale Remote Access | 📋 Planned     | -                                                                  | All objectives pending                                                           |
+| 5     | Additional Services     | 📋 Planned     | -                                                                  | Services to be determined                                                        |
+
+**Legend:**
+
+- ✅ Complete - All objectives achieved
+- ⏳ In Progress - Partially complete, work ongoing
+- 📋 Planned - Not yet started
+
+---
+
 ## Architecture Overview
 
 ### Infrastructure Components
@@ -21,7 +39,8 @@ This document outlines the phased approach to setting up a home network server r
 2. **Pi-hole** - Network-wide DNS and ad-blocking
 3. **Homepage** - Service dashboard and navigation hub
 4. **Traefik** - Reverse proxy with automatic SSL/TLS
-5. **Future Services** - Jellyfin, Syncthing, and others
+5. **Tailscale** - Secure remote access VPN
+6. **Future Services** - Jellyfin, Syncthing, Code-Server (VSCode), and others
 
 ### Network Architecture
 
@@ -37,9 +56,17 @@ Internet
        │   ├─ Pi-hole (Port 53, 80, 443)
        │   ├─ Traefik (Port 80, 443) - Reverse Proxy
        │   ├─ Homepage (via Traefik)
+       │   ├─ Tailscale (VPN for remote access)
+       │   ├─ Code-Server (VSCode in browser)
        │   └─ Future Services (via Traefik)
        │
        └─ Volumes (persistent data)
+
+Remote Access (via Tailscale)
+   │
+   ├─ Mobile Devices (iPhone, iPad, Android)
+   ├─ Remote Laptops/Computers
+   └─ All devices can securely access services via Tailscale VPN
 ```
 
 ---
@@ -59,6 +86,10 @@ Get Pi-hole up and running as the network's DNS server with ad-blocking capabili
 - [x] Test DNS resolution from multiple devices
 - [ ] Local domain name resolution (will be configured in Phase 3 with Traefik)
 
+### Outstanding Items
+
+- **Local Domain Name Resolution:** Currently accessing Pi-hole via IP address (`http://192.168.0.243/admin`). Local domain name resolution (e.g., `newton.local`) will be configured in Phase 3 with Traefik. DNS configuration will be handled through Pi-hole's web interface or `custom.list` file when needed.
+
 ### Implementation Details
 
 **Docker Compose Configuration:**
@@ -74,7 +105,7 @@ Get Pi-hole up and running as the network's DNS server with ad-blocking capabili
 - Set secondary DNS to a backup (e.g., 1.1.1.1 or 8.8.8.8)
 - Ensure DHCP is configured to distribute Pi-hole DNS to clients
 
-**Testing Checklist:**
+### Testing Checklist
 
 - [x] Pi-hole web interface accessible (via IP: `http://192.168.0.243/admin`)
 - [x] DNS queries resolve correctly
@@ -82,13 +113,7 @@ Get Pi-hole up and running as the network's DNS server with ad-blocking capabili
 - [x] All devices on network using Pi-hole DNS
 - [x] Query logs visible in Pi-hole dashboard
 
-**Note on Domain Names:**
-
-- Currently accessing Pi-hole via IP address (`http://192.168.0.243/admin`)
-- Local domain name resolution (e.g., `newton.local`) will be configured in Phase 3 with Traefik
-- DNS configuration will be handled through Pi-hole's web interface or `custom.list` file when needed
-
-**Success Criteria:**
+### Success Criteria
 
 - ✅ All network devices automatically use Pi-hole for DNS
 - ✅ Ad-blocking is active and working
@@ -106,11 +131,17 @@ Add Homepage (https://github.com/gethomepage/homepage) as a service dashboard to
 
 ### Objectives
 
-- [ ] Add Homepage service to docker-compose
-- [ ] Configure Homepage with initial service links
-- [ ] Set up Homepage configuration directory
-- [ ] Integrate Homepage with Pi-hole (show status)
-- [ ] Access Homepage from network devices
+- [x] Add Homepage service to docker-compose
+- [x] Configure Homepage with initial service links
+- [x] Set up Homepage configuration directory
+- [ ] Integrate Homepage with Pi-hole (show status) - needs service status indicators
+- [x] Access Homepage from network devices
+
+### Outstanding Items
+
+- **Configuration Persistence Verification:** Test that Homepage configuration persists across container restarts (verify volume mounts are working correctly)
+- **Service Status Indicators:** Set up service status monitoring to show Pi-hole status in Homepage (integrate Pi-hole status API/widget)
+- **Basic Widgets Setup:** Expand widget configuration beyond the current resources widget (time, date, weather, or other useful widgets)
 
 ### Implementation Details
 
@@ -129,18 +160,22 @@ Add Homepage (https://github.com/gethomepage/homepage) as a service dashboard to
   - Service status indicators
 - Configure Pi-hole integration widget (if available)
 
-**Testing Checklist:**
+### Testing Checklist
 
-- [ ] Homepage accessible from network devices
-- [ ] Pi-hole link works from Homepage
+- [x] Homepage accessible from network devices (192.168.0.243:3000)
+- [x] Pi-hole link works from Homepage
 - [ ] Homepage displays correctly on all device types
-- [ ] Configuration persists across container restarts
+- [ ] Configuration persists across container restarts (needs verification)
+- [ ] Service status indicators working
+- [ ] Basic widgets configured (resources widget exists, but more widgets may be needed)
 
-**Success Criteria:**
+### Success Criteria
 
-- Homepage serves as central navigation hub
-- All services accessible via Homepage links
-- Homepage responsive on mobile and desktop devices
+- ✅ Homepage serves as central navigation hub
+- ✅ All services accessible via Homepage links
+- ⏳ Homepage responsive on mobile and desktop devices (needs testing on all device types)
+- ⏳ Service status indicators working (outstanding)
+- ⏳ Configuration persists across container restarts (needs verification)
 
 ---
 
@@ -159,6 +194,10 @@ Implement Traefik as a reverse proxy to access services via friendly domain name
 - [ ] Configure routing rules for Pi-hole
 - [ ] Set up local domain resolution (home.local)
 - [ ] Remove direct port mappings (use Traefik only)
+
+### Outstanding Items
+
+All objectives are pending - this phase will be implemented after Phase 2 is complete.
 
 ### Implementation Details
 
@@ -197,7 +236,7 @@ labels:
 - Alternative: Router DNS entries or `/etc/hosts` entries for `*.newton.local`
 - Or use mDNS/Bonjour for automatic discovery
 
-**Testing Checklist:**
+### Testing Checklist
 
 - [ ] Traefik dashboard accessible
 - [ ] Services accessible via domain names
@@ -205,7 +244,7 @@ labels:
 - [ ] Services only accessible through Traefik
 - [ ] Routing works from all device types
 
-**Success Criteria:**
+### Success Criteria
 
 - All services accessible via friendly domain names
 - No need to remember port numbers
@@ -214,47 +253,207 @@ labels:
 
 ---
 
-## Phase 4: Additional Services 📦
+## Phase 4: Tailscale Secure Remote Access 🔐
+
+### Goal
+
+Set up Tailscale to enable secure, encrypted remote access to all services from anywhere without exposing ports to the internet.
+
+### Objectives
+
+- [ ] Add Tailscale service to docker-compose
+- [ ] Configure Tailscale authentication (auth key)
+- [ ] Set up Tailscale subnet routing (optional, for full network access)
+- [ ] Configure services to be accessible via Tailscale IP
+- [ ] Test remote access from mobile devices and remote locations
+- [ ] Configure Tailscale MagicDNS for friendly service names
+- [ ] Document remote access procedures
+
+### Outstanding Items
+
+All objectives are pending - this phase will be implemented after Phase 3 is complete.
+
+### Implementation Details
+
+**Docker Compose Configuration:**
+
+- Tailscale container with host network mode (required for proper routing)
+- Persistent volume for Tailscale state (`/var/lib/tailscale`)
+- Environment variables for authentication
+- Proper restart policy
+
+**Tailscale Setup Steps:**
+
+1. **Create Tailscale Account & Auth Key:**
+   - Sign up at https://tailscale.com (free tier available, up to 100 devices)
+   - Generate auth key from Tailscale admin console (Settings → Keys)
+   - Use one-time key or reusable key for server
+   - Store auth key in `.env` file (never commit to git)
+
+2. **Container Configuration:**
+   - Use official `tailscale/tailscale` image
+   - Mount `/var/lib/tailscale` for persistent state
+   - Set `TS_AUTHKEY` environment variable from `.env`
+   - Use `network_mode: host` for proper networking
+   - Add `TS_STATE_DIR` for state persistence
+
+3. **Service Access:**
+   - Services accessible via Tailscale IP (e.g., `100.x.x.x:3000` for Homepage)
+   - Can use Tailscale MagicDNS (e.g., `homepage.your-tailnet.ts.net`)
+   - Works alongside local network access (no conflicts)
+   - No router port forwarding needed
+
+**Remote Access Configuration:**
+
+- **Homepage:** Accessible via Tailscale IP + port (e.g., `100.x.x.x:3000`) or MagicDNS
+- **Pi-hole:** Accessible via Tailscale IP + port 80 (e.g., `100.x.x.x/admin`)
+- **Code-Server (VSCode):** Accessible via Tailscale IP + port or MagicDNS (perfect for remote development)
+- **Future Services (Jellyfin, etc.):** All accessible via Tailscale network
+- **Traefik:** When implemented, services accessible via Traefik through Tailscale
+
+**Security Benefits:**
+
+- No port forwarding required on router (eliminates attack surface)
+- Encrypted WireGuard-based VPN (end-to-end encryption)
+- Zero-trust network model (devices must be authorized)
+- Access control via Tailscale admin console
+- Works behind NAT/firewalls without configuration
+- Automatic key rotation and security updates
+
+**Tailscale Features to Configure:**
+
+- **MagicDNS:** Enable for friendly service names (e.g., `homepage.your-tailnet.ts.net`)
+- **Subnet Routing (Optional):** Allow remote devices to access entire home network
+- **ACLs (Access Control Lists):** Fine-grained access control if needed
+- **Device Tags:** Organize and manage devices
+
+**File Structure Addition:**
+
+```
+home-network/
+├── ...
+└── tailscale/
+    └── state/              # Tailscale state (mounted from /var/lib/tailscale)
+```
+
+**Environment Variables (.env):**
+
+```bash
+# Tailscale Configuration
+TAILSCALE_AUTHKEY=tskey-auth-xxxxx  # One-time or reusable auth key
+TAILSCALE_HOSTNAME=newton-server    # Optional: custom hostname in Tailscale
+```
+
+### Testing Checklist
+
+- [ ] Tailscale container running and authenticated
+- [ ] Server appears in Tailscale admin console
+- [ ] Can access Homepage remotely via Tailscale IP
+- [ ] Can access Pi-hole remotely via Tailscale IP
+- [ ] MagicDNS working (if enabled)
+- [ ] Remote access works from mobile devices (iPhone, Android)
+- [ ] Remote access works from different networks
+- [ ] Services remain accessible on local network
+- [ ] No conflicts between local and remote access
+
+### Success Criteria
+
+- All services accessible securely from remote locations
+- No router port forwarding needed
+- Access works from all device types (mobile, laptop, etc.)
+- Services remain accessible on local network
+- Tailscale dashboard shows connected devices
+- Remote access is encrypted and secure
+
+---
+
+## Phase 5: Additional Services 📦
 
 ### Goal
 
 Add more self-hosted services to the home network setup.
 
-### Planned Services
+### Objectives
 
-#### Jellyfin (Media Server)
+- [ ] Add Jellyfin media server
+- [ ] Add Syncthing file synchronization
+- [ ] Add Code-Server (VSCode in browser)
+- [ ] Configure each service with Traefik routing
+- [ ] Add service links to Homepage
+- [ ] Test accessibility from local and remote networks
+- [ ] Document each service in README
+
+### Outstanding Items
+
+All objectives are pending - this phase will be implemented after Phase 3 (Traefik) and Phase 4 (Tailscale) are complete.
+
+### Implementation Details
+
+**Jellyfin (Media Server):**
 
 - **Purpose:** Media streaming and management
-- **Access:** `jellyfin.newton.local`
+- **Access:** `jellyfin.newton.local` (local) or via Tailscale (remote)
 - **Requirements:** Media storage volumes, GPU passthrough (optional)
 - **Integration:** Homepage widget for media stats
+- **Remote Access:** Via Tailscale network (secure streaming from anywhere)
 
-#### Syncthing (File Synchronization)
+**Syncthing (File Synchronization):**
 
 - **Purpose:** File sync across devices
-- **Access:** `syncthing.newton.local`
+- **Access:** `syncthing.newton.local` (local) or via Tailscale (remote)
 - **Requirements:** Data volumes for synced folders
 - **Integration:** Homepage link, status widget
+- **Remote Access:** Via Tailscale network
 
-#### Future Services (To Be Determined)
+**Code-Server (VSCode in Browser):**
 
-- Additional services as needed
-- Each service will follow the same pattern:
-  - Add to docker-compose.yml
-  - Configure Traefik labels
-  - Add to Homepage config
-  - Document in README
+- **Purpose:** Full VSCode editor accessible via web browser for remote development
+- **Access:** `code.newton.local` (local) or via Tailscale (remote)
+- **Requirements:**
+  - Volume mounts for project directories
+  - Persistent configuration and extensions
+  - Secure authentication (password or OAuth)
+- **Integration:** Homepage link, status widget
+- **Remote Access:** Via Tailscale network (perfect for remote development)
+- **Use Cases:**
+  - Edit code on server from any device
+  - Work on projects remotely without SSH/SCP
+  - Full VSCode experience with extensions, terminal, Git integration
+  - Access server filesystem directly
 
-### Implementation Pattern
+**Implementation Pattern:**
 
 For each new service:
 
 1. Add service definition to docker-compose.yml
-2. Configure Traefik labels for routing
-3. Add service link to Homepage config
-4. Create necessary volume directories
-5. Update documentation
-6. Test accessibility from all devices
+2. Configure Traefik labels for routing (local access)
+3. Service automatically accessible via Tailscale (remote access)
+4. Add service link to Homepage config
+5. Create necessary volume directories
+6. Update documentation
+7. Test accessibility from local and remote networks
+
+**Future Services:**
+
+- Additional services as needed
+- Each service will follow the same implementation pattern
+
+### Testing Checklist
+
+- [ ] Each service accessible via local domain name
+- [ ] Each service accessible via Tailscale (remote)
+- [ ] Service links work from Homepage
+- [ ] Service status indicators working (if applicable)
+- [ ] Configuration persists across container restarts
+- [ ] Services work correctly on all device types
+
+### Success Criteria
+
+- All planned services successfully deployed
+- Services accessible via friendly domain names (local)
+- Services accessible securely via Tailscale (remote)
+- All services integrated into Homepage
+- Documentation complete for each service
 
 ---
 
@@ -307,7 +506,9 @@ For each new service:
 - Services behind reverse proxy (Traefik)
 - No direct internet exposure (unless needed)
 - Firewall rules on router
-- VPN access for remote management (future)
+- Tailscale VPN for secure remote access (Phase 4)
+- No port forwarding required (Tailscale handles connectivity)
+- Encrypted end-to-end connections via WireGuard
 
 ### Container Security
 
@@ -364,6 +565,8 @@ For each new service:
 
 ## File Structure
 
+**Current Structure (Implemented):**
+
 ```
 home-network/
 ├── docker-compose.yml          # Main orchestration file
@@ -373,78 +576,73 @@ home-network/
 ├── README.md                  # Project documentation
 ├── PLANNING.md                # This file
 ├── setup.sh                   # Initial setup script
-├── traefik/
-│   ├── traefik.yml           # Traefik static config
-│   └── letsencrypt/          # SSL certificates
-├── pihole/
+├── pihole/                    # ✅ Phase 1 - Implemented
 │   ├── etc/                  # Pi-hole config (includes custom.list for local DNS)
 │   └── etc-dnsmasq.d/        # DNSmasq config (optional, for advanced configs)
 ├── scripts/
 │   └── pihole/
 │       ├── update-server-ip.sh   # Update server IP in .env
 │       └── test-pihole.sh        # Test Pi-hole functionality
-├── homepage/
-│   └── config/               # Homepage config files
-├── jellyfin/
-│   ├── config/               # Jellyfin config
-│   └── cache/                # Jellyfin cache
-├── syncthing/
-│   ├── config/               # Syncthing config
-│   └── data/                 # Synced data
-└── media/                    # Media files (Jellyfin)
+└── homepage/                  # ⏳ Phase 2 - In Progress
+    └── config/               # Homepage config files
 ```
 
----
+**Planned Structure (Future Phases):**
 
-## Success Metrics
-
-### Phase 1 Success
-
-- ✅ Network-wide ad-blocking active
-- ✅ All devices using Pi-hole DNS
-- ✅ Pi-hole dashboard accessible and functional (via IP: `http://192.168.0.243/admin`)
-- ⏳ Domain name access will be added in Phase 3 with Traefik
-
-### Phase 2 Success
-
-- ✅ Homepage accessible from all devices
-- ✅ Homepage provides navigation to all services
-- ✅ Service status visible in Homepage
-
-### Phase 3 Success
-
-- ✅ All services accessible via domain names
-- ✅ No port numbers needed for access
-- ✅ Traefik automatically routes new services
-
-### Overall Success
-
-- ✅ Single docker-compose.yml manages all services
-- ✅ CI/CD practices in place and working
-- ✅ All devices can access all services
-- ✅ System is maintainable and documented
+```
+home-network/
+├── traefik/                   # 📋 Phase 3 - Planned
+│   ├── traefik.yml           # Traefik static config
+│   └── letsencrypt/          # SSL certificates
+├── tailscale/                 # 📋 Phase 4 - Planned
+│   └── state/                # Tailscale state (mounted from /var/lib/tailscale)
+├── jellyfin/                  # 📋 Phase 5 - Planned
+│   ├── config/               # Jellyfin config
+│   └── cache/                # Jellyfin cache
+├── syncthing/                 # 📋 Phase 5 - Planned
+│   ├── config/               # Syncthing config
+│   └── data/                 # Synced data
+├── code-server/               # 📋 Phase 5 - Planned
+│   ├── config/               # Code-server config
+│   └── data/                 # Code-server data (extensions, settings)
+└── media/                     # 📋 Phase 5 - Planned
+    └── ...                    # Media files (Jellyfin)
+```
 
 ---
 
 ## Next Steps
 
-1. **Immediate:** Begin Phase 1 implementation
-   - Set up Pi-hole in docker-compose.yml
-   - Configure network and volumes
-   - Test DNS functionality
+1. **Immediate (Phase 2 - Outstanding Items):**
+   - Verify Homepage configuration persists across container restarts
+   - Set up service status indicators (integrate Pi-hole status monitoring)
+   - Expand basic widgets configuration (beyond current resources widget)
+   - Test Homepage on all device types (mobile, tablet, desktop)
 
-2. **After Phase 1:** Move to Phase 2
-   - Add Homepage service
-   - Configure initial dashboard
-
-3. **After Phase 2:** Implement Phase 3
-   - Add Traefik reverse proxy
+2. **After Phase 2 Complete:** Implement Phase 3
+   - Add Traefik reverse proxy service
+   - Configure Traefik with Docker provider
+   - Set up local domain resolution (`*.newton.local`)
    - Migrate services to Traefik routing
+   - Remove direct port mappings
 
-4. **Ongoing:** Add services as needed
-   - Follow established patterns
+3. **After Phase 3:** Implement Phase 4
+   - Add Tailscale for secure remote access
+   - Configure Tailscale authentication
+   - Set up remote access to all services
+   - Test from mobile devices and remote locations
+   - Configure Tailscale MagicDNS
+
+4. **After Phase 4:** Implement Phase 5
+   - Add additional services (Jellyfin, Syncthing, Code-Server)
+   - Follow established implementation pattern
+   - Integrate each service with Homepage
+
+5. **Ongoing:**
+   - Follow established patterns for new services
    - Maintain documentation
    - Keep CI/CD practices
+   - Regular security updates
 
 ---
 
@@ -458,5 +656,5 @@ home-network/
 
 ---
 
-**Last Updated:** 2025-11-30
-**Status:** Phase 1 Complete, Phase 2 Next
+**Last Updated:** 2025-01-27
+**Status:** Phase 1 Complete ✅ | Phase 2 In Progress (Homepage running, outstanding: configuration persistence verification, service status indicators, basic widgets) | Phase 4 (Tailscale) Planned
