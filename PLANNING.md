@@ -583,7 +583,6 @@ home-network/
 │   └── etc-dnsmasq.d/        # DNSmasq config (optional, for advanced configs)
 ├── scripts/
 │   └── pihole/
-│       ├── update-server-ip.sh   # Update server IP in .env
 │       └── test-pihole.sh        # Test Pi-hole functionality
 └── homepage/                  # ⏳ Phase 2 - In Progress
     └── config/               # Homepage config files

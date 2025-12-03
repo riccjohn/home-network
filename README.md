@@ -1,6 +1,12 @@
 # Home Network Server
 
-A self-hosted home network server setup running on Ubuntu Server, managed entirely through Docker Compose.
+[![Docker](https://img.shields.io/badge/Docker-Required-2496ED?logo=docker)](https://www.docker.com/)
+[![Docker Compose](https://img.shields.io/badge/Docker%20Compose-Required-2496ED?logo=docker)](https://docs.docker.com/compose/)
+[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20.0.0-339933?logo=node.js)](https://nodejs.org/)
+[![pnpm](https://img.shields.io/badge/pnpm-8.15.4-F69220?logo=pnpm)](https://pnpm.io/)
+[![License](https://img.shields.io/badge/License-Unlicense-lightgrey)](LICENSE)
+
+A self-hosted home network server setup running on Ubuntu Server, managed entirely through Docker Compose. This project provides a complete home network infrastructure with DNS, ad-blocking, service dashboard, reverse proxy, and secure remote access capabilities.
 
 ## Overview
 
@@ -8,63 +14,106 @@ This project provides a complete home network infrastructure including:
 
 - **Pi-hole** - Network-wide DNS and ad-blocking
 - **Homepage** - Service dashboard and navigation hub
-- **Traefik** - Reverse proxy for easy service access
-- **Additional Services** - Jellyfin, Syncthing, and more
+- **Traefik** - Reverse proxy for easy service access (planned)
+- **Tailscale** - Secure remote access VPN (planned)
+- **Additional Services** - Jellyfin, Syncthing, Code-Server, and more (planned)
 
 All services are accessible from devices across the network (Linux, Android, TVs, Mac, iPhone, iPad, etc.).
 
-## Planning
-
-See [PLANNING.md](./PLANNING.md) for the complete implementation plan, including:
-
-- Phased rollout strategy
-- Architecture overview
-- Security considerations
-- CI/CD practices
-- Network configuration details
-
-## Quick Start
-
-1. Clone this repository
-2. Run the setup script:
-   ```bash
-   ./setup.sh
-   ```
-3. Edit `.env` file with your settings
-4. Start services:
-   ```bash
-   docker compose up -d
-   ```
-
-## Current Status
-
-✅ **Phase 1: Pi-hole MVP** - Ready for deployment
-
-See [PLANNING.md](./PLANNING.md) for the complete implementation roadmap.
-
 ## Services
 
-### Pi-hole
+### Currently Implemented
 
-Network-wide DNS and ad-blocking service.
+- **Pi-hole** - Network-wide DNS and ad-blocking service
+- **Homepage** - Service dashboard and navigation hub
 
-**Quick Setup:**
+### Planned Services
 
-1. Run `./setup.sh` (auto-detects server IP)
-2. Configure router DHCP DNS to use your server IP
-3. Start: `docker compose up -d`
-4. Access: `http://YOUR_SERVER_IP/admin`
+- **Traefik** - Reverse proxy with automatic SSL/TLS
+- **Tailscale** - Secure remote access VPN
+- **Jellyfin** - Media streaming server
+- **Syncthing** - File synchronization
+- **Code-Server** - VSCode in browser for remote development
 
-**Documentation:**
+For detailed progress information and implementation status, see [PLANNING.md](./PLANNING.md).
 
-- [Pi-hole Setup & Configuration](./docs/pihole-setup.md)
-- [Pi-hole Troubleshooting](./docs/pihole-troubleshooting.md)
+## Prerequisites
 
-**Scripts:**
+Before setting up the home network server, ensure you have the following installed:
 
-- `scripts/pihole/test-pihole.sh` - Test Pi-hole functionality
-- `scripts/pihole/diagnose-pihole.sh` - Network diagnostic tool
-- `scripts/pihole/update-server-ip.sh` - Update server IP in .env
+- **Docker** - Container runtime ([Install Docker](https://docs.docker.com/get-docker/))
+- **Docker Compose** - Container orchestration ([Install Docker Compose](https://docs.docker.com/compose/install/))
+- **Node.js** - Version 20.0.0 or higher ([Install Node.js](https://nodejs.org/))
+- **pnpm** - Version 8.15.4 ([Install pnpm](https://pnpm.io/installation))
+
+### Verify Prerequisites
+
+```bash
+# Check Docker
+docker --version
+
+# Check Docker Compose
+docker compose version
+
+# Check Node.js
+node --version  # Should be >= 20.0.0
+
+# Check pnpm
+pnpm --version  # Should be 8.15.4
+```
+
+## Installation & Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd home-network
+```
+
+### 2. Install Development Dependencies
+
+```bash
+pnpm install
+```
+
+### 3. Run Setup Script
+
+The setup script will:
+
+- Verify Docker and Docker Compose are installed
+- Create necessary directories
+- Auto-detect your server IP address
+- Create or update the `.env` file
+
+```bash
+./setup.sh
+```
+
+### 4. Configure Environment Variables
+
+Edit the `.env` file with your settings. See `.env.example` for all available environment variables and their descriptions.
+
+### 5. Configure Router DNS
+
+Configure your router to use Pi-hole as the DNS server:
+
+1. Log into your router's admin interface
+2. Find DNS settings (usually in DHCP or Network settings)
+3. Set Primary DNS to your server IP (e.g., `192.168.0.243`)
+4. Set Secondary DNS to a backup (e.g., `8.8.8.8` or `1.1.1.1`)
+5. Save and restart router if needed
+
+### 6. Start Services
+
+```bash
+docker compose up -d
+```
+
+### 7. Access Services
+
+- **Pi-hole Admin**: `http://YOUR_SERVER_IP/admin`
+- **Homepage**: `http://YOUR_SERVER_IP:3000`
 
 ## Project Structure
 
@@ -72,14 +121,38 @@ Network-wide DNS and ad-blocking service.
 home-network/
 ├── docker-compose.yml      # Main orchestration file
 ├── .env                    # Environment variables (gitignored)
-├── setup.sh                # Initial setup script
-├── docs/                   # Service-specific documentation
+├── .env.example           # Environment template
+├── setup.sh               # Initial setup script
+├── package.json           # Node.js dependencies
+├── PLANNING.md            # Detailed planning and progress document
+├── docs/                  # Service-specific documentation
 │   └── pihole-*.md
-├── scripts/                # Service-specific scripts
+├── scripts/               # Service-specific scripts
 │   └── pihole/
-└── [service]/             # Service data directories
+├── pihole/                # Pi-hole data directories
+│   ├── etc/
+│   └── etc-dnsmasq.d/
+└── homepage/              # Homepage configuration
+    └── config/
 ```
 
-## License
+## Progress & Planning
 
-[Add your license here]
+For detailed information about:
+
+- Implementation progress and status
+- Phased rollout strategy
+- Architecture overview
+- Security considerations
+- Network configuration details
+- Future plans and roadmap
+
+See **[PLANNING.md](./PLANNING.md)** for the complete planning document.
+
+## Scripts
+
+- `scripts/pihole/test-pihole.sh` - Test Pi-hole functionality
+
+## Contributing
+
+This is a personal home network setup project. Contributions and suggestions are welcome!
