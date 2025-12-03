@@ -44,4 +44,6 @@ services:
       # Allow requests from server IP (required for network access)
       # Format: host:port (e.g., 192.168.0.243:3000)
       - HOMEPAGE_ALLOWED_HOSTS=${SERVER_IP:-192.168.0.243}:3000
+      # Pi-hole API key for widget integration (Homepage requires HOMEPAGE_VAR_ prefix)
+      - HOMEPAGE_VAR_PIHOLE_API_KEY=${PIHOLE_API_KEY:-}
     restart: unless-stopped

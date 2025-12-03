@@ -7,3 +7,8 @@
         href: http://192.168.0.243/admin
         description: Network-wide DNS and ad-blocking
         icon: raspberry-pi
+        widget:
+          type: pihole
+          url: http://192.168.0.243
+          key: "{{HOMEPAGE_VAR_PIHOLE_API_KEY}}"
+          version: 6
