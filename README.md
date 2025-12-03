@@ -4,6 +4,7 @@
 [![Docker Compose](https://img.shields.io/badge/Docker%20Compose-Required-2496ED?logo=docker)](https://docs.docker.com/compose/)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20.0.0-339933?logo=node.js)](https://nodejs.org/)
 [![pnpm](https://img.shields.io/badge/pnpm-8.15.4-F69220?logo=pnpm)](https://pnpm.io/)
+[![CI](https://github.com/riccjohn/home-network/actions/workflows/ci.yml/badge.svg)](https://github.com/riccjohn/home-network/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A self-hosted home network server setup running on Ubuntu Server, managed entirely through Docker Compose. This project provides a complete home network infrastructure with DNS, ad-blocking, service dashboard, reverse proxy, and secure remote access capabilities.
@@ -12,11 +13,11 @@ A self-hosted home network server setup running on Ubuntu Server, managed entire
 
 This project provides a complete home network infrastructure including:
 
-- **Pi-hole** - Network-wide DNS and ad-blocking
-- **Homepage** - Service dashboard and navigation hub
-- **Traefik** - Reverse proxy for easy service access (planned)
-- **Tailscale** - Secure remote access VPN (planned)
-- **Additional Services** - Jellyfin, Syncthing, Code-Server, and more (planned)
+- [<img src="https://cdn.simpleicons.org/pihole/000000" alt="Pi-hole" width="20" height="20"> **Pi-hole**](https://pi-hole.net/) - Network-wide DNS and ad-blocking
+- [<img src="https://cdn.simpleicons.org/homepage/000000" alt="Homepage" width="20" height="20"> **Homepage**](https://gethomepage.dev/) - Service dashboard and navigation hub
+- [<img src="https://cdn.simpleicons.org/traefikproxy/000000" alt="Traefik" width="20" height="20"> **Traefik**](https://traefik.io/) - Reverse proxy for easy service access (planned)
+- [<img src="https://cdn.simpleicons.org/tailscale/000000" alt="Tailscale" width="20" height="20"> **Tailscale**](https://tailscale.com/) - Secure remote access VPN (planned)
+- **Additional Services** - [<img src="https://cdn.simpleicons.org/jellyfin/000000" alt="Jellyfin" width="20" height="20"> Jellyfin](https://jellyfin.org/), [<img src="https://cdn.simpleicons.org/syncthing/000000" alt="Syncthing" width="20" height="20"> Syncthing](https://syncthing.net/), [<img src="https://cdn.simpleicons.org/coder/000000" alt="Code-Server" width="20" height="20"> Code-Server](https://coder.com/), and more (planned)
 
 All services are accessible from devices across the network (Linux, Android, TVs, Mac, iPhone, iPad, etc.).
 
@@ -24,16 +25,16 @@ All services are accessible from devices across the network (Linux, Android, TVs
 
 ### Currently Implemented
 
-- **Pi-hole** - Network-wide DNS and ad-blocking service
-- **Homepage** - Service dashboard and navigation hub
+- [<img src="https://cdn.simpleicons.org/pihole/000000" alt="Pi-hole" width="20" height="20"> **Pi-hole**](https://pi-hole.net/) - Network-wide DNS and ad-blocking service
+- [<img src="https://cdn.simpleicons.org/homepage/000000" alt="Homepage" width="20" height="20"> **Homepage**](https://gethomepage.dev/) - Service dashboard and navigation hub
 
 ### Planned Services
 
-- **Traefik** - Reverse proxy with automatic SSL/TLS
-- **Tailscale** - Secure remote access VPN
-- **Jellyfin** - Media streaming server
-- **Syncthing** - File synchronization
-- **Code-Server** - VSCode in browser for remote development
+- [<img src="https://cdn.simpleicons.org/traefikproxy/000000" alt="Traefik" width="20" height="20"> **Traefik**](https://traefik.io/) - Reverse proxy with automatic SSL/TLS
+- [<img src="https://cdn.simpleicons.org/tailscale/000000" alt="Tailscale" width="20" height="20"> **Tailscale**](https://tailscale.com/) - Secure remote access VPN
+- [<img src="https://cdn.simpleicons.org/jellyfin/000000" alt="Jellyfin" width="20" height="20"> **Jellyfin**](https://jellyfin.org/) - Media streaming server
+- [<img src="https://cdn.simpleicons.org/syncthing/000000" alt="Syncthing" width="20" height="20"> **Syncthing**](https://syncthing.net/) - File synchronization
+- [<img src="https://cdn.simpleicons.org/coder/000000" alt="Code-Server" width="20" height="20"> **Code-Server**](https://coder.com/cde) - VSCode in browser for remote development
 
 For detailed progress information and implementation status, see [PLANNING.md](./PLANNING.md).
 
@@ -112,8 +113,8 @@ docker compose up -d
 
 ### 7. Access Services
 
-- **Pi-hole Admin**: `http://YOUR_SERVER_IP/admin`
-- **Homepage**: `http://YOUR_SERVER_IP:3000`
+- [<img src="https://cdn.simpleicons.org/pihole/000000" alt="Pi-hole" width="20" height="20"> **Pi-hole Admin**](https://pi-hole.net/): `http://YOUR_SERVER_IP/admin`
+- [<img src="https://cdn.simpleicons.org/homepage/000000" alt="Homepage" width="20" height="20"> **Homepage**](https://gethomepage.dev/): `http://YOUR_SERVER_IP:3000`
 
 ## Project Structure
 
