@@ -4,7 +4,7 @@
 [![Docker Compose](https://img.shields.io/badge/Docker%20Compose-Required-2496ED?logo=docker)](https://docs.docker.com/compose/)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20.0.0-339933?logo=node.js)](https://nodejs.org/)
 [![pnpm](https://img.shields.io/badge/pnpm-8.15.4-F69220?logo=pnpm)](https://pnpm.io/)
-[![License](https://img.shields.io/badge/License-Unlicense-lightgrey)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A self-hosted home network server setup running on Ubuntu Server, managed entirely through Docker Compose. This project provides a complete home network infrastructure with DNS, ad-blocking, service dashboard, reverse proxy, and secure remote access capabilities.
 
