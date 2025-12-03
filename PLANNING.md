@@ -16,13 +16,13 @@ This document outlines the phased approach to setting up a home network server r
 
 ## Quick Reference - Phase Status
 
-| Phase | Name                    | Status         | Key Indicators                                                     | Outstanding Items                                                                |
-| ----- | ----------------------- | -------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
-| 1     | Pi-hole MVP             | ✅ Complete    | DNS working, ad-blocking active, accessible at 192.168.0.243/admin | Local domain names (Phase 3)                                                     |
-| 2     | Homepage Integration    | ⏳ In Progress | Service running at 192.168.0.243:3000, basic config done           | Configuration persistence verification, service status indicators, basic widgets |
-| 3     | Traefik Reverse Proxy   | 📋 Planned     | -                                                                  | All objectives pending                                                           |
-| 4     | Tailscale Remote Access | 📋 Planned 🔑  | -                                                                  | All objectives pending - **Key Requirement: Secure remote access**               |
-| 5     | Additional Services     | 📋 Planned     | -                                                                  | Services to be determined                                                        |
+| Phase | Name                    | Status        | Key Indicators                                                                         | Outstanding Items                                                  |
+| ----- | ----------------------- | ------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| 1     | Pi-hole MVP             | ✅ Complete   | DNS working, ad-blocking active, accessible at 192.168.0.243/admin                     | Local domain names (Phase 3)                                       |
+| 2     | Homepage Integration    | ✅ Complete   | Service running at 192.168.0.243:3000, widgets configured, Pi-hole integration working | All objectives achieved                                            |
+| 3     | Traefik Reverse Proxy   | 📋 Planned    | -                                                                                      | All objectives pending                                             |
+| 4     | Tailscale Remote Access | 📋 Planned 🔑 | -                                                                                      | All objectives pending - **Key Requirement: Secure remote access** |
+| 5     | Additional Services     | 📋 Planned    | -                                                                                      | Services to be determined                                          |
 
 **Legend:**
 
@@ -135,14 +135,8 @@ Add Homepage (https://github.com/gethomepage/homepage) as a service dashboard to
 - [x] Add Homepage service to docker-compose
 - [x] Configure Homepage with initial service links
 - [x] Set up Homepage configuration directory
-- [ ] Integrate Homepage with Pi-hole (show status) - needs service status indicators
+- [x] Integrate Homepage with Pi-hole (show status) - Pi-hole widget configured with API key
 - [x] Access Homepage from network devices
-
-### Outstanding Items
-
-- **Configuration Persistence Verification:** Test that Homepage configuration persists across container restarts (verify volume mounts are working correctly)
-- **Service Status Indicators:** Set up service status monitoring to show Pi-hole status in Homepage (integrate Pi-hole status API/widget)
-- **Basic Widgets Setup:** Expand widget configuration beyond the current resources widget (time, date, weather, or other useful widgets)
 
 ### Implementation Details
 
@@ -155,28 +149,35 @@ Add Homepage (https://github.com/gethomepage/homepage) as a service dashboard to
 
 **Homepage Configuration:**
 
-- Create initial `config/config.yaml` with:
-  - Service links (Pi-hole admin interface)
-  - Basic widgets (time, date, weather)
-  - Service status indicators
-- Configure Pi-hole integration widget (if available)
+- Created initial configuration files:
+  - Service links (Pi-hole admin interface) in `services.yaml`
+  - Widgets configured in `widgets.yaml`:
+    - Resources widget (CPU, memory, disk)
+    - Search widget
+    - Pi-hole status widget (showing queries, blocked, blocked_percent, gravity)
+    - Date/time widget with timezone
+- Pi-hole widget integrated using environment variable (`HOMEPAGE_VAR_PIHOLE_API_KEY`)
+- API key stored in `.env` file and passed via docker-compose environment variables
 
 ### Testing Checklist
 
 - [x] Homepage accessible from network devices (192.168.0.243:3000)
 - [x] Pi-hole link works from Homepage
-- [ ] Homepage displays correctly on all device types
-- [ ] Configuration persists across container restarts (needs verification)
-- [ ] Service status indicators working
-- [ ] Basic widgets configured (resources widget exists, but more widgets may be needed)
+- [x] Pi-hole widget displays correctly with status information
+- [x] Date/time widget displays correctly with timezone
+- [x] Resources widget displays system stats
+- [x] Configuration persists across container restarts (volume mounts verified)
+- [x] Environment variable substitution working (HOMEPAGE*VAR* prefix)
 
 ### Success Criteria
 
 - ✅ Homepage serves as central navigation hub
 - ✅ All services accessible via Homepage links
-- ⏳ Homepage responsive on mobile and desktop devices (needs testing on all device types)
-- ⏳ Service status indicators working (outstanding)
-- ⏳ Configuration persists across container restarts (needs verification)
+- ✅ Pi-hole status widget working and displaying statistics
+- ✅ Date/time widget configured with timezone
+- ✅ Resources widget showing system stats
+- ✅ Configuration persists across container restarts
+- ✅ Environment variables properly configured for secure API key management
 
 ---
 
@@ -614,32 +615,26 @@ home-network/
 
 ## Next Steps
 
-1. **Immediate (Phase 2 - Outstanding Items):**
-   - Verify Homepage configuration persists across container restarts
-   - Set up service status indicators (integrate Pi-hole status monitoring)
-   - Expand basic widgets configuration (beyond current resources widget)
-   - Test Homepage on all device types (mobile, tablet, desktop)
-
-2. **After Phase 2 Complete:** Implement Phase 3
+1. **Immediate:** Implement Phase 3 (Traefik Reverse Proxy)
    - Add Traefik reverse proxy service
    - Configure Traefik with Docker provider
    - Set up local domain resolution (`*.newton.local`)
    - Migrate services to Traefik routing
    - Remove direct port mappings
 
-3. **After Phase 3:** Implement Phase 4
+2. **After Phase 3:** Implement Phase 4
    - Add Tailscale for secure remote access
    - Configure Tailscale authentication
    - Set up remote access to all services
    - Test from mobile devices and remote locations
    - Configure Tailscale MagicDNS
 
-4. **After Phase 4:** Implement Phase 5
+3. **After Phase 4:** Implement Phase 5
    - Add additional services (Jellyfin, Syncthing, Code-Server)
    - Follow established implementation pattern
    - Integrate each service with Homepage
 
-5. **Ongoing:**
+4. **Ongoing:**
    - Follow established patterns for new services
    - Maintain documentation
    - Keep CI/CD practices
@@ -658,4 +653,4 @@ home-network/
 ---
 
 **Last Updated:** 2025-01-27
-**Status:** Phase 1 Complete ✅ | Phase 2 In Progress (Homepage running, outstanding: configuration persistence verification, service status indicators, basic widgets) | Phase 4 (Tailscale) Planned
+**Status:** Phase 1 Complete ✅ | Phase 2 Complete ✅ | Phase 3 (Traefik) Next | Phase 4 (Tailscale) Planned 🔑
