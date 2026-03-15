@@ -20,6 +20,16 @@
           type: traefik
           url: https://traefik.woggles.work
 
+- Infrastructure:
+    - Portainer:
+        href: https://portainer.woggles.work
+        description: Docker container management
+        icon: portainer
+        widget:
+          type: portainer
+          url: http://portainer:9000
+          env: 1
+
 - Media:
     - Jellyfin:
         href: https://jellyfin.woggles.work
