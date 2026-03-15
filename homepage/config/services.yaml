@@ -50,3 +50,7 @@
         widget:
           type: syncthing
           url: http://syncthing:8384
+    - FileBrowser:
+        href: https://files.woggles.work
+        description: Drag-and-drop file transfer
+        icon: filebrowser

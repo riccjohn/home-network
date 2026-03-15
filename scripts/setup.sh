@@ -86,6 +86,8 @@ mkdir -p jellyfin/config
 mkdir -p jellyfin/cache
 mkdir -p syncthing/config
 mkdir -p traefik/dynamic
+mkdir -p filebrowser
+touch filebrowser/database.db
 
 # Set proper permissions
 echo "🔐 Setting permissions..."
@@ -114,7 +116,7 @@ fi
 
 if [ -n "$SERVER_IP" ] && [ "$SERVER_IP" != "" ]; then
     echo -e "${GREEN}✅ Server IP detected: $SERVER_IP${NC}"
-    
+
     # Update .env file with detected IP
     if [ -f .env ]; then
         # Check if SERVER_IP already exists in .env
@@ -175,5 +177,5 @@ echo "   https://pihole.woggles.work    — Pi-hole admin"
 echo "   https://traefik.woggles.work   — Traefik dashboard"
 echo "   https://jellyfin.woggles.work  — Media server"
 echo "   https://syncthing.woggles.work — File sync"
+echo "   https://files.woggles.work     — FileBrowser (default login: admin/admin — change immediately!)"
 echo ""
-

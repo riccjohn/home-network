@@ -6,14 +6,15 @@ Self-hosted home server stack running on Ubuntu Server (Lenovo ThinkCentre), man
 
 ## Services
 
-| Service   | URL                               | Description          |
-| --------- | --------------------------------- | -------------------- |
-| Homepage  | https://homepage.woggles.work     | Dashboard            |
-| Pi-hole   | https://pihole.woggles.work/admin | DNS ad-blocker       |
-| Traefik   | https://traefik.woggles.work      | Reverse proxy        |
-| Jellyfin  | https://jellyfin.woggles.work     | Media server         |
-| Syncthing | https://syncthing.woggles.work    | File sync            |
-| Portainer | https://portainer.woggles.work    | Container management |
+| Service     | URL                               | Description          |
+| ----------- | --------------------------------- | -------------------- |
+| Homepage    | https://homepage.woggles.work     | Dashboard            |
+| Pi-hole     | https://pihole.woggles.work/admin | DNS ad-blocker       |
+| Traefik     | https://traefik.woggles.work      | Reverse proxy        |
+| Jellyfin    | https://jellyfin.woggles.work     | Media server         |
+| Syncthing   | https://syncthing.woggles.work    | File sync            |
+| Portainer   | https://portainer.woggles.work    | Container management |
+| FileBrowser | https://files.woggles.work        | File manager         |
 
 ## Prerequisites
 
@@ -28,7 +29,7 @@ Self-hosted home server stack running on Ubuntu Server (Lenovo ThinkCentre), man
 ```bash
 git clone <repository-url>
 cd home-network
-./setup.sh
+./scripts/setup.sh
 ```
 
 The setup script creates required directories, sets `acme.json` to `600` (required by Traefik), and auto-detects your server IP.
@@ -50,6 +51,7 @@ Edit `.env` and fill in:
 | `SERVER_IP`        | Auto-detected by setup script; verify it's correct     |
 | `MEDIA_PATH`       | Path to your media drive (e.g. `/mnt/media`)           |
 | `SYNC_PATH`        | Path to your sync drive (e.g. `/mnt/sync`)             |
+| `FILEBROWSER_PATH` | Path FileBrowser serves (e.g. `/mnt/data`)             |
 
 `PIHOLE_API_KEY`, `JELLYFIN_API_KEY`, `PORTAINER_API_KEY`, and `PORTAINER_ENV_ID` can be left empty until after first run (see step 7).
 
@@ -126,6 +128,8 @@ The script handles:
 
 If any service fails, the script skips it and prints instructions. Re-run it after fixing the issue — it skips services that are already configured.
 
+**FileBrowser** default login is `admin` / `admin` — change the password immediately after first login at `https://files.woggles.work`.
+
 ## Hardware Transcoding
 
 Jellyfin uses Intel VA-API on the Haswell i3-4130T. Find the render group ID and set it in `.env`:
@@ -141,7 +145,9 @@ getent group render | cut -d: -f3
 home-network/
 ├── docker-compose.yml
 ├── .env.example
-├── setup.sh
+├── scripts/
+│   ├── setup.sh                # initial setup
+│   └── post-setup.sh           # grab API keys after first run
 ├── pihole/
 │   └── etc-dnsmasq.d/
 │       └── 02-local-dns.conf   # wildcard DNS for *.woggles.work
@@ -158,8 +164,10 @@ home-network/
 │   └── config/                 # jellyfin config (gitignored)
 ├── syncthing/
 │   └── config/                 # syncthing config (gitignored)
-└── portainer/
-    └── data/                   # portainer data (gitignored)
+├── portainer/
+│   └── data/                   # portainer data (gitignored)
+└── filebrowser/
+    └── database.db             # filebrowser state (gitignored)
 ```
 
 ## Future
