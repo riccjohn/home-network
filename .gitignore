@@ -20,17 +20,17 @@ pihole/etc-dnsmasq.d/*.conf.bak
 # Homepage: ignore logs, but track all configuration files
 homepage/config/logs/
 
+# Claude Code
+.claude/scratch/
+.yaks/
+craft-execution-log.md
+
 # OS files
 .DS_Store
 Thumbs.db
-.yaks
-.yaks/
 
 # Service config volumes (machine-specific, potentially large)
 jellyfin/config/
 jellyfin/cache/
 syncthing/config/
-
-# Craft / scratch artifacts
-craft-execution-log.md
-.claude/scratch/
+portainer/data/
