@@ -142,6 +142,23 @@ services:
       - "traefik.http.routers.portainer.tls.certresolver=cloudflare"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
 
+  filebrowser:
+    container_name: filebrowser
+    image: filebrowser/filebrowser:latest
+    user: "1000:1000"
+    volumes:
+      - ./filebrowser/database.db:/database.db
+      - ${FILEBROWSER_PATH:-/mnt/data}:/srv
+    networks:
+      - proxy
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.filebrowser.rule=Host(`files.woggles.work`)"
+      - "traefik.http.routers.filebrowser.entrypoints=websecure"
+      - "traefik.http.routers.filebrowser.tls.certresolver=cloudflare"
+      - "traefik.http.services.filebrowser.loadbalancer.server.port=80"
+
   syncthing:
     container_name: syncthing
     image: lscr.io/linuxserver/syncthing:latest
