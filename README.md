@@ -92,7 +92,7 @@ sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 ```
 
-> If you want services reachable from outside your LAN, also forward ports 80 and 443 on your router to the server IP. For LAN-only access, no router port forwarding is needed.
+No router port forwarding needed — all access is LAN-only. External access will be added via Tailscale in a future phase.
 
 ### 7. Start services (staging certs first)
 
