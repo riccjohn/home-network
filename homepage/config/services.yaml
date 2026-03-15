@@ -28,7 +28,7 @@
         widget:
           type: portainer
           url: http://portainer:9000
-          env: 1
+          env: "{{HOMEPAGE_VAR_PORTAINER_ENV_ID}}"
           key: "{{HOMEPAGE_VAR_PORTAINER_API_KEY}}"
 
 - Media:

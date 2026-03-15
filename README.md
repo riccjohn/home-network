@@ -51,7 +51,7 @@ Edit `.env` and fill in:
 | `MEDIA_PATH`       | Path to your media drive (e.g. `/mnt/media`)           |
 | `SYNC_PATH`        | Path to your sync drive (e.g. `/mnt/sync`)             |
 
-`PIHOLE_API_KEY` and `JELLYFIN_API_KEY` can be left empty until after first run (see step 7).
+`PIHOLE_API_KEY`, `JELLYFIN_API_KEY`, `PORTAINER_API_KEY`, and `PORTAINER_ENV_ID` can be left empty until after first run (see step 7).
 
 ### 3. Create a Cloudflare API token
 
@@ -110,26 +110,21 @@ docker compose logs -f traefik
 
 ### 8. Post-first-run: grab API keys
 
-**Pi-hole API key** (for Homepage widget):
+Run the post-setup script — it fetches API keys from each service and writes them to `.env` automatically:
 
-1. Go to `https://pihole.woggles.work/admin` > **Settings** > **API**
-2. Copy the API key into `.env` as `PIHOLE_API_KEY`
-3. Run `docker compose restart homepage`
+```bash
+./scripts/post-setup.sh
+```
 
-**Jellyfin API key** (for Homepage widget):
+The script handles:
 
-1. Go to `https://jellyfin.woggles.work` and complete initial setup
-2. Go to **Dashboard** > **API Keys** > **+**
-3. Copy the key into `.env` as `JELLYFIN_API_KEY`
-4. Run `docker compose restart homepage`
+- **Portainer** — creates the admin account (if not yet done), generates an API token, and looks up the environment ID
+- **Pi-hole** — reads the API key from the running container using `PIHOLE_PASSWORD` from `.env`
+- **Jellyfin** — authenticates with admin credentials to create an API key
 
-**Portainer API key** (for Homepage widget):
+**Before running the script**, complete the Jellyfin initial setup wizard at `https://jellyfin.woggles.work` — it cannot be automated. The script will detect if it hasn't been done yet and remind you.
 
-1. Go to `https://portainer.woggles.work` and complete initial setup (do this promptly — it times out after a few minutes)
-2. Go to **Account Settings** > **Access Tokens** > **Add access token**
-3. Copy the key into `.env` as `PORTAINER_API_KEY`
-4. Add `key: "{{HOMEPAGE_VAR_PORTAINER_API_KEY}}"` under the Portainer widget in `homepage/config/services.yaml`
-5. Run `docker compose restart homepage`
+If any service fails, the script skips it and prints instructions. Re-run it after fixing the issue — it skips services that are already configured.
 
 ## Hardware Transcoding
 
