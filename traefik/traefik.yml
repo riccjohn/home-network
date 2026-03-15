@@ -26,9 +26,7 @@ certificatesResolvers:
       # email is passed via CLI arg in docker-compose.yml:
       # --certificatesresolvers.cloudflare.acme.email=${ADMIN_EMAIL}
       storage: /acme.json
-      # STAGING: switch to production after testing:
-      # caServer: "https://acme-v02.api.letsencrypt.org/directory"
-      caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
+      caServer: "https://acme-v02.api.letsencrypt.org/directory"
       dnsChallenge:
         provider: cloudflare
         resolvers:
