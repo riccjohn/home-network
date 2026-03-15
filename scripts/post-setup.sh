@@ -105,8 +105,12 @@ if ! is_set PORTAINER_API_KEY || ! is_set PORTAINER_ENV_ID; then
   if [[ -z "$JWT" || "$JWT" == "null" ]]; then
     echo "    Error: could not authenticate with Portainer. Skipping."
   else
+    # Get the authenticated user's ID (don't assume it's 1)
+    USER_ID=$(curl -sf http://localhost:9000/api/users/me \
+      -H "Authorization: Bearer ${JWT}" | jq -r '.Id')
+
     # Create an API token for Homepage
-    API_KEY=$(curl -sf -X POST http://localhost:9000/api/users/1/tokens \
+    API_KEY=$(curl -sf -X POST "http://localhost:9000/api/users/${USER_ID}/tokens" \
       -H "Authorization: Bearer ${JWT}" \
       -H "Content-Type: application/json" \
       -d '{"description":"homepage"}' | jq -r '.rawAPIKey')
