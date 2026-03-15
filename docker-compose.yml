@@ -1,26 +1,25 @@
+networks:
+  proxy:
+    driver: bridge
+    name: proxy
+
 services:
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
     hostname: pihole
-    domainname: ${DOMAIN:-home.local}
+    domainname: ${DOMAIN:-woggles.work}
     network_mode: host
     environment:
-      # Timezone (configure via TZ in .env file, e.g., TZ=America/New_York, TZ=Europe/London)
       TZ: ${TZ:-America/New_York}
-      # Pi-hole password
       FTLCONF_webserver_api_password: ${PIHOLE_PASSWORD:-changeme}
       WEBPASSWORD: ${PIHOLE_PASSWORD:-changeme}
-      # DNS Settings
+      # Move web UI off port 80/443 so Traefik can own those ports
+      FTLCONF_webserver_port: "8080"
       PIHOLE_DNS: ${PIHOLE_DNS:-8.8.8.8;1.1.1.1}
-      # Set the IP of the host machine for Pi-hole to know its own address
-      # Configure via SERVER_IP in .env file (e.g., SERVER_IP=192.168.0.243)
       SERVERIP: ${SERVER_IP:-192.168.0.243}
-      # Interface settings - 'eth0' is often correct on Linux hosts
       INTERFACE: eth0
-      # IPv6 settings (disable if not needed)
       IPv6: "false"
-      # Admin interface settings
       ADMIN_EMAIL: ${ADMIN_EMAIL:-}
     volumes:
       - ./pihole/etc:/etc/pihole
@@ -29,21 +28,121 @@ services:
     cap_add:
       - NET_ADMIN
 
+  traefik:
+    container_name: traefik
+    image: traefik:v3
+    # Pass ACME email from .env (traefik.yml does not support env var interpolation)
+    command:
+      - "--certificatesresolvers.cloudflare.acme.email=${ADMIN_EMAIL}"
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
+    extra_hosts:
+      # Allows Traefik to reach Pi-hole (network_mode: host) via host.docker.internal
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/dynamic:/etc/traefik/dynamic:ro
+      - ./traefik/letsencrypt/acme.json:/acme.json
+    networks:
+      - proxy
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      # Dashboard route — also triggers the wildcard cert request for *.woggles.work
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.woggles.work`)"
+      - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
+      - "traefik.http.routers.traefik-dashboard.tls.certresolver=cloudflare"
+      - "traefik.http.routers.traefik-dashboard.tls.domains[0].main=woggles.work"
+      - "traefik.http.routers.traefik-dashboard.tls.domains[0].sans=*.woggles.work"
+      - "traefik.http.routers.traefik-dashboard.service=api@internal"
+
+  dockerproxy:
+    container_name: dockerproxy
+    image: ghcr.io/tecnativa/docker-socket-proxy:latest
+    environment:
+      - CONTAINERS=1
+      - SERVICES=1
+      - TASKS=1
+      - POST=0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - proxy
+    restart: unless-stopped
+
   homepage:
     container_name: homepage
     image: ghcr.io/gethomepage/homepage:latest
     hostname: homepage
-    domainname: ${DOMAIN:-home.local}
-    ports:
-      - "3000:3000"
     user: "1000:1000"
     volumes:
       - ./homepage/config:/app/config
     environment:
       - TZ=${TZ:-America/New_York}
-      # Allow requests from server IP (required for network access)
-      # Format: host:port (e.g., 192.168.0.243:3000)
-      - HOMEPAGE_ALLOWED_HOSTS=${SERVER_IP:-192.168.0.243}:3000
-      # Pi-hole API key for widget integration (Homepage requires HOMEPAGE_VAR_ prefix)
+      - HOMEPAGE_ALLOWED_HOSTS=homepage.woggles.work
       - HOMEPAGE_VAR_PIHOLE_API_KEY=${PIHOLE_API_KEY:-}
+      - HOMEPAGE_VAR_JELLYFIN_API_KEY=${JELLYFIN_API_KEY:-}
+      - DOCKER_HOST=tcp://dockerproxy:2375
+    networks:
+      - proxy
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homepage.rule=Host(`homepage.woggles.work`)"
+      - "traefik.http.routers.homepage.entrypoints=websecure"
+      - "traefik.http.routers.homepage.tls.certresolver=cloudflare"
+      - "traefik.http.services.homepage.loadbalancer.server.port=3000"
+
+  jellyfin:
+    container_name: jellyfin
+    image: jellyfin/jellyfin
+    user: "1000:1000"
+    group_add:
+      # Run: getent group render | cut -d: -f3 on the server to find the correct GID
+      - "${RENDER_GID:-44}"
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+    volumes:
+      - ./jellyfin/config:/config
+      - ./jellyfin/cache:/cache
+      - ${MEDIA_PATH:-/mnt/media}:/media:ro
+    ports:
+      - "8096:8096"
+    networks:
+      - proxy
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.woggles.work`)"
+      - "traefik.http.routers.jellyfin.entrypoints=websecure"
+      - "traefik.http.routers.jellyfin.tls.certresolver=cloudflare"
+      - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+
+  syncthing:
+    container_name: syncthing
+    image: lscr.io/linuxserver/syncthing:latest
+    hostname: syncthing
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ:-America/New_York}
+    volumes:
+      - ./syncthing/config:/config
+      - ${SYNC_PATH:-/mnt/sync}:/data1
+    ports:
+      - "22000:22000/tcp"
+      - "22000:22000/udp"
+      - "21027:21027/udp"
+    networks:
+      - proxy
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.syncthing.rule=Host(`syncthing.woggles.work`)"
+      - "traefik.http.routers.syncthing.entrypoints=websecure"
+      - "traefik.http.routers.syncthing.tls.certresolver=cloudflare"
+      - "traefik.http.services.syncthing.loadbalancer.server.port=8384"

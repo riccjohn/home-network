@@ -1,0 +1,15 @@
+http:
+  routers:
+    pihole:
+      rule: "Host(`pihole.woggles.work`)"
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: cloudflare
+      service: pihole-svc
+
+  services:
+    pihole-svc:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:8080"

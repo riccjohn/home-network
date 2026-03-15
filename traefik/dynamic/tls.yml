@@ -1,0 +1,9 @@
+tls:
+  stores:
+    default:
+      defaultGeneratedCert:
+        resolver: cloudflare
+        domain:
+          main: "woggles.work"
+          sans:
+            - "*.woggles.work"

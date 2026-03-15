@@ -1,159 +1,179 @@
 # Home Network Server
 
-[![Docker](https://img.shields.io/badge/Docker-Required-2496ED?logo=docker)](https://www.docker.com/)
-[![Docker Compose](https://img.shields.io/badge/Docker%20Compose-Required-2496ED?logo=docker)](https://docs.docker.com/compose/)
-[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20.0.0-339933?logo=node.js)](https://nodejs.org/)
-[![pnpm](https://img.shields.io/badge/pnpm-8.15.4-F69220?logo=pnpm)](https://pnpm.io/)
-[![CI](https://github.com/riccjohn/home-network/actions/workflows/ci.yml/badge.svg)](https://github.com/riccjohn/home-network/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A self-hosted home network server setup running on Ubuntu Server, managed entirely through Docker Compose. This project provides a complete home network infrastructure with DNS, ad-blocking, service dashboard, reverse proxy, and secure remote access capabilities.
-
-## Overview
-
-This project provides a complete home network infrastructure including:
-
-- [<img src="https://cdn.simpleicons.org/pihole/000000" alt="Pi-hole" width="20" height="20"> **Pi-hole**](https://pi-hole.net/) - Network-wide DNS and ad-blocking
-- [<img src="https://cdn.simpleicons.org/homepage/000000" alt="Homepage" width="20" height="20"> **Homepage**](https://gethomepage.dev/) - Service dashboard and navigation hub
-- [<img src="https://cdn.simpleicons.org/traefikproxy/000000" alt="Traefik" width="20" height="20"> **Traefik**](https://traefik.io/) - Reverse proxy for easy service access (planned)
-- [<img src="https://cdn.simpleicons.org/tailscale/000000" alt="Tailscale" width="20" height="20"> **Tailscale**](https://tailscale.com/) - Secure remote access VPN (planned)
-- **Additional Services** - [<img src="https://cdn.simpleicons.org/jellyfin/000000" alt="Jellyfin" width="20" height="20"> Jellyfin](https://jellyfin.org/), [<img src="https://cdn.simpleicons.org/syncthing/000000" alt="Syncthing" width="20" height="20"> Syncthing](https://syncthing.net/), [<img src="https://cdn.simpleicons.org/coder/000000" alt="Code-Server" width="20" height="20"> Code-Server](https://coder.com/), and more (planned)
-
-All services are accessible from devices across the network (Linux, Android, TVs, Mac, iPhone, iPad, etc.).
+Self-hosted home server stack running on Ubuntu Server (Lenovo ThinkCentre), managed with Docker Compose. Traefik handles reverse proxying and wildcard TLS via Cloudflare DNS-01 challenge.
 
 ## Services
 
-### Currently Implemented
-
-- [<img src="https://cdn.simpleicons.org/pihole/000000" alt="Pi-hole" width="20" height="20"> **Pi-hole**](https://pi-hole.net/) - Network-wide DNS and ad-blocking service
-- [<img src="https://cdn.simpleicons.org/homepage/000000" alt="Homepage" width="20" height="20"> **Homepage**](https://gethomepage.dev/) - Service dashboard and navigation hub
-
-### Planned Services
-
-- [<img src="https://cdn.simpleicons.org/traefikproxy/000000" alt="Traefik" width="20" height="20"> **Traefik**](https://traefik.io/) - Reverse proxy with automatic SSL/TLS
-- [<img src="https://cdn.simpleicons.org/tailscale/000000" alt="Tailscale" width="20" height="20"> **Tailscale**](https://tailscale.com/) - Secure remote access VPN
-- [<img src="https://cdn.simpleicons.org/jellyfin/000000" alt="Jellyfin" width="20" height="20"> **Jellyfin**](https://jellyfin.org/) - Media streaming server
-- [<img src="https://cdn.simpleicons.org/syncthing/000000" alt="Syncthing" width="20" height="20"> **Syncthing**](https://syncthing.net/) - File synchronization
-- [<img src="https://cdn.simpleicons.org/coder/000000" alt="Code-Server" width="20" height="20"> **Code-Server**](https://coder.com/cde) - VSCode in browser for remote development
-
-For detailed progress information and implementation status, see [PLANNING.md](./PLANNING.md).
+| Service   | URL                               | Description    |
+| --------- | --------------------------------- | -------------- |
+| Homepage  | https://homepage.woggles.work     | Dashboard      |
+| Pi-hole   | https://pihole.woggles.work/admin | DNS ad-blocker |
+| Traefik   | https://traefik.woggles.work      | Reverse proxy  |
+| Jellyfin  | https://jellyfin.woggles.work     | Media server   |
+| Syncthing | https://syncthing.woggles.work    | File sync      |
 
 ## Prerequisites
 
-Before setting up the home network server, ensure you have the following installed:
+- Ubuntu Server with Docker and Docker Compose installed
+- Domain registered at Cloudflare (`woggles.work`)
+- Cloudflare API token with **Zone:DNS:Edit** permission (see step 3 below)
 
-- **Docker** - Container runtime ([Install Docker](https://docs.docker.com/get-docker/))
-- **Docker Compose** - Container orchestration ([Install Docker Compose](https://docs.docker.com/compose/install/))
-- **Node.js** - Version 20.0.0 or higher ([Install Node.js](https://nodejs.org/))
-- **pnpm** - Version 8.15.4 ([Install pnpm](https://pnpm.io/installation))
+## Setup
 
-### Verify Prerequisites
-
-```bash
-# Check Docker
-docker --version
-
-# Check Docker Compose
-docker compose version
-
-# Check Node.js
-node --version  # Should be >= 20.0.0
-
-# Check pnpm
-pnpm --version  # Should be 8.15.4
-```
-
-## Installation & Setup
-
-### 1. Clone the Repository
+### 1. Clone and run setup script
 
 ```bash
 git clone <repository-url>
 cd home-network
-```
-
-### 2. Install Development Dependencies
-
-```bash
-pnpm install
-```
-
-### 3. Run Setup Script
-
-The setup script will:
-
-- Verify Docker and Docker Compose are installed
-- Create necessary directories
-- Auto-detect your server IP address
-- Create or update the `.env` file
-
-```bash
 ./setup.sh
 ```
 
-### 4. Configure Environment Variables
+The setup script creates required directories, sets `acme.json` to `600` (required by Traefik), and auto-detects your server IP.
 
-Edit the `.env` file with your settings. See `.env.example` for all available environment variables and their descriptions.
+### 2. Configure environment variables
 
-### 5. Configure Router DNS
+```bash
+cp .env.example .env
+```
 
-Configure your router to use Pi-hole as the DNS server:
+Edit `.env` and fill in:
+
+| Variable           | How to get it                                          |
+| ------------------ | ------------------------------------------------------ |
+| `PIHOLE_PASSWORD`  | Choose a password                                      |
+| `ADMIN_EMAIL`      | Your email — used for Let's Encrypt expiry notices     |
+| `CF_DNS_API_TOKEN` | See step 3 below                                       |
+| `RENDER_GID`       | Run `getent group render \| cut -d: -f3` on the server |
+| `SERVER_IP`        | Auto-detected by setup script; verify it's correct     |
+| `MEDIA_PATH`       | Path to your media drive (e.g. `/mnt/media`)           |
+| `SYNC_PATH`        | Path to your sync drive (e.g. `/mnt/sync`)             |
+
+`PIHOLE_API_KEY` and `JELLYFIN_API_KEY` can be left empty until after first run (see step 7).
+
+### 3. Create a Cloudflare API token
+
+Traefik uses Cloudflare's DNS-01 ACME challenge to issue a wildcard TLS cert. You need a scoped API token (not the global API key):
+
+1. Go to [dash.cloudflare.com](https://dash.cloudflare.com) > **My Profile** > **API Tokens**
+2. Click **Create Token** > **Create Custom Token**
+3. Set permissions: **Zone** → **DNS** → **Edit**
+4. Under **Zone Resources**: Include → Specific zone → `woggles.work`
+5. Copy the token into `.env` as `CF_DNS_API_TOKEN`
+
+### 4. Add DNS records in Cloudflare
+
+Add two **A records** pointing to your server's LAN IP. Set proxy status to **DNS only** (grey cloud — do NOT enable the orange proxy):
+
+| Type | Name             | Content         | Proxy    |
+| ---- | ---------------- | --------------- | -------- |
+| A    | `woggles.work`   | `192.168.0.243` | DNS only |
+| A    | `*.woggles.work` | `192.168.0.243` | DNS only |
+
+### 5. Point your router's DNS to Pi-hole
+
+So all LAN devices resolve `*.woggles.work` to the server:
 
 1. Log into your router's admin interface
-2. Find DNS settings (usually in DHCP or Network settings)
-3. Set Primary DNS to your server IP (e.g., `192.168.0.243`)
-4. Set Secondary DNS to a backup (e.g., `8.8.8.8` or `1.1.1.1`)
-5. Save and restart router if needed
+2. Find **DHCP / DNS** settings
+3. Set **Primary DNS** to your server IP (e.g. `192.168.0.243`)
+4. Set **Secondary DNS** to `8.8.8.8` (fallback if Pi-hole is down)
+5. Save and apply — devices will pick up the new DNS on their next DHCP renewal (or reconnect)
 
-### 6. Start Services
+Pi-hole's local DNS config at `pihole/etc-dnsmasq.d/02-local-dns.conf` already resolves `*.woggles.work` to the server IP — no changes needed there.
+
+### 6. Open ports 80 and 443 on the server firewall
+
+Traefik binds to ports 80 and 443. If `ufw` is active:
+
+```bash
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+```
+
+> If you want services reachable from outside your LAN, also forward ports 80 and 443 on your router to the server IP. For LAN-only access, no router port forwarding is needed.
+
+### 7. Start services (staging certs first)
+
+`traefik/traefik.yml` is pre-configured to use Let's Encrypt **staging** to avoid rate-limit issues during initial setup:
 
 ```bash
 docker compose up -d
 ```
 
-### 7. Access Services
+Check that Traefik gets a staging cert:
 
-- [<img src="https://cdn.simpleicons.org/pihole/000000" alt="Pi-hole" width="20" height="20"> **Pi-hole Admin**](https://pi-hole.net/): `http://YOUR_SERVER_IP/admin`
-- [<img src="https://cdn.simpleicons.org/homepage/000000" alt="Homepage" width="20" height="20"> **Homepage**](https://gethomepage.dev/): `http://YOUR_SERVER_IP:3000`
+```bash
+docker compose logs traefik | grep -i acme
+# look for: "Obtain certificate" and no fatal errors
+```
+
+Once confirmed working, switch to production certs by editing `traefik/traefik.yml`:
+
+```yaml
+# Comment out staging, uncomment production:
+caServer: "https://acme-v02.api.letsencrypt.org/directory"
+# caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
+```
+
+Then delete the old staging cert and restart:
+
+```bash
+# Delete the staging cert so Traefik requests a fresh production one
+echo '{}' | sudo tee traefik/letsencrypt/acme.json && sudo chmod 600 traefik/letsencrypt/acme.json
+docker compose restart traefik
+```
+
+### 8. Post-first-run: grab API keys
+
+**Pi-hole API key** (for Homepage widget):
+
+1. Go to `https://pihole.woggles.work/admin` > **Settings** > **API**
+2. Copy the API key into `.env` as `PIHOLE_API_KEY`
+3. Run `docker compose restart homepage`
+
+**Jellyfin API key** (for Homepage widget):
+
+1. Go to `https://jellyfin.woggles.work` and complete initial setup
+2. Go to **Dashboard** > **API Keys** > **+**
+3. Copy the key into `.env` as `JELLYFIN_API_KEY`
+4. Run `docker compose restart homepage`
+
+## Hardware Transcoding
+
+Jellyfin uses Intel VA-API on the Haswell i3-4130T. Find the render group ID and set it in `.env`:
+
+```bash
+getent group render | cut -d: -f3
+# add result as RENDER_GID in .env
+```
 
 ## Project Structure
 
 ```
 home-network/
-├── docker-compose.yml      # Main orchestration file
-├── .env                    # Environment variables (gitignored)
-├── .env.example           # Environment template
-├── setup.sh               # Initial setup script
-├── package.json           # Node.js dependencies
-├── PLANNING.md            # Detailed planning and progress document
-├── docs/                  # Service-specific documentation
-│   └── pihole-*.md
-├── scripts/               # Service-specific scripts
-│   └── pihole/
-├── pihole/                # Pi-hole data directories
-│   ├── etc/
+├── docker-compose.yml
+├── .env.example
+├── setup.sh
+├── pihole/
 │   └── etc-dnsmasq.d/
-└── homepage/              # Homepage configuration
-    └── config/
+│       └── 02-local-dns.conf   # wildcard DNS for *.woggles.work
+├── traefik/
+│   ├── traefik.yml             # static config
+│   ├── dynamic/
+│   │   ├── tls.yml             # wildcard cert config
+│   │   └── services.yml        # Pi-hole backend
+│   └── letsencrypt/
+│       └── acme.json           # cert storage (gitignored)
+├── homepage/
+│   └── config/                 # dashboard YAML configs
+├── jellyfin/
+│   └── config/                 # jellyfin config (gitignored)
+└── syncthing/
+    └── config/                 # syncthing config (gitignored)
 ```
 
-## Progress & Planning
+## Future
 
-For detailed information about:
-
-- Implementation progress and status
-- Phased rollout strategy
-- Architecture overview
-- Security considerations
-- Network configuration details
-- Future plans and roadmap
-
-See **[PLANNING.md](./PLANNING.md)** for the complete planning document.
-
-## Scripts
-
-- `scripts/pihole/test-pihole.sh` - Test Pi-hole functionality
-
-## Contributing
-
-This is a personal home network setup project. Contributions and suggestions are welcome!
+Tailscale remote access planned as a future phase.

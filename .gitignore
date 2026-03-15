@@ -9,6 +9,9 @@ node_modules/
 .docker/
 docker-compose.override.yml
 
+# Traefik: ignore cert storage (contains private keys)
+traefik/letsencrypt/acme.json
+
 # Docker volumes and data
 # Pi-hole: ignore runtime data, but track configuration files
 pihole/etc/
@@ -20,3 +23,14 @@ homepage/config/logs/
 # OS files
 .DS_Store
 Thumbs.db
+.yaks
+.yaks/
+
+# Service config volumes (machine-specific, potentially large)
+jellyfin/config/
+jellyfin/cache/
+syncthing/config/
+
+# Craft / scratch artifacts
+craft-execution-log.md
+.claude/scratch/
