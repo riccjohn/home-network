@@ -6,13 +6,14 @@ Self-hosted home server stack running on Ubuntu Server (Lenovo ThinkCentre), man
 
 ## Services
 
-| Service   | URL                               | Description    |
-| --------- | --------------------------------- | -------------- |
-| Homepage  | https://homepage.woggles.work     | Dashboard      |
-| Pi-hole   | https://pihole.woggles.work/admin | DNS ad-blocker |
-| Traefik   | https://traefik.woggles.work      | Reverse proxy  |
-| Jellyfin  | https://jellyfin.woggles.work     | Media server   |
-| Syncthing | https://syncthing.woggles.work    | File sync      |
+| Service   | URL                               | Description          |
+| --------- | --------------------------------- | -------------------- |
+| Homepage  | https://homepage.woggles.work     | Dashboard            |
+| Pi-hole   | https://pihole.woggles.work/admin | DNS ad-blocker       |
+| Traefik   | https://traefik.woggles.work      | Reverse proxy        |
+| Jellyfin  | https://jellyfin.woggles.work     | Media server         |
+| Syncthing | https://syncthing.woggles.work    | File sync            |
+| Portainer | https://portainer.woggles.work    | Container management |
 
 ## Prerequisites
 
@@ -94,35 +95,17 @@ sudo ufw allow 443/tcp
 
 No router port forwarding needed — all access is LAN-only. External access will be added via Tailscale in a future phase.
 
-### 7. Start services (staging certs first)
-
-`traefik/traefik.yml` is pre-configured to use Let's Encrypt **staging** to avoid rate-limit issues during initial setup:
+### 7. Start services
 
 ```bash
 docker compose up -d
 ```
 
-Check that Traefik gets a staging cert:
+Watch Traefik obtain the wildcard cert from Let's Encrypt (takes ~2 minutes due to DNS propagation):
 
 ```bash
-docker compose logs traefik | grep -i acme
-# look for: "Obtain certificate" and no fatal errors
-```
-
-Once confirmed working, switch to production certs by editing `traefik/traefik.yml`:
-
-```yaml
-# Comment out staging, uncomment production:
-caServer: "https://acme-v02.api.letsencrypt.org/directory"
-# caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
-```
-
-Then delete the old staging cert and restart:
-
-```bash
-# Delete the staging cert so Traefik requests a fresh production one
-echo '{}' | sudo tee traefik/letsencrypt/acme.json && sudo chmod 600 traefik/letsencrypt/acme.json
-docker compose restart traefik
+docker compose logs -f traefik
+# Look for: "INF Register..." then no more "unable to find certificate" errors
 ```
 
 ### 8. Post-first-run: grab API keys
@@ -139,6 +122,14 @@ docker compose restart traefik
 2. Go to **Dashboard** > **API Keys** > **+**
 3. Copy the key into `.env` as `JELLYFIN_API_KEY`
 4. Run `docker compose restart homepage`
+
+**Portainer API key** (for Homepage widget):
+
+1. Go to `https://portainer.woggles.work` and complete initial setup (do this promptly — it times out after a few minutes)
+2. Go to **Account Settings** > **Access Tokens** > **Add access token**
+3. Copy the key into `.env` as `PORTAINER_API_KEY`
+4. Add `key: "{{HOMEPAGE_VAR_PORTAINER_API_KEY}}"` under the Portainer widget in `homepage/config/services.yaml`
+5. Run `docker compose restart homepage`
 
 ## Hardware Transcoding
 
@@ -170,8 +161,10 @@ home-network/
 │   └── config/                 # dashboard YAML configs
 ├── jellyfin/
 │   └── config/                 # jellyfin config (gitignored)
-└── syncthing/
-    └── config/                 # syncthing config (gitignored)
+├── syncthing/
+│   └── config/                 # syncthing config (gitignored)
+└── portainer/
+    └── data/                   # portainer data (gitignored)
 ```
 
 ## Future
