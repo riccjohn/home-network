@@ -116,8 +116,10 @@ if ! is_set PORTAINER_API_KEY || ! is_set PORTAINER_ENV_ID; then
       -d '{"description":"homepage"}' | jq -r '.rawAPIKey')
 
     # Get the first environment ID
+    # Portainer 2.15+ returns a paginated object {results:[...],totalCount:N};
+    # older versions return a plain array. Handle both.
     ENV_ID=$(curl -sf http://localhost:9000/api/endpoints \
-      -H "X-API-Key: ${API_KEY}" | jq '.[0].Id')
+      -H "X-API-Key: ${API_KEY}" | jq 'if type == "array" then .[0].Id else .results[0].Id end')
 
     set_env_var "PORTAINER_API_KEY" "$API_KEY"
     set_env_var "PORTAINER_ENV_ID" "$ENV_ID"
