@@ -2,13 +2,40 @@
 # For configuration options and examples, please see:
 # https://gethomepage.dev/configs/services/
 
-- Network Services:
+- Network:
     - Pi-hole:
-        href: http://192.168.0.243/admin
+        href: https://pihole.woggles.work/admin
         description: Network-wide DNS and ad-blocking
-        icon: raspberry-pi
+        icon: pi-hole
         widget:
           type: pihole
-          url: http://192.168.0.243
+          url: http://192.168.0.243:8080
           key: "{{HOMEPAGE_VAR_PIHOLE_API_KEY}}"
           version: 6
+    - Traefik:
+        href: https://traefik.woggles.work
+        description: Reverse proxy and SSL termination
+        icon: traefik
+        widget:
+          type: traefik
+          url: https://traefik.woggles.work
+
+- Media:
+    - Jellyfin:
+        href: https://jellyfin.woggles.work
+        description: Media server
+        icon: jellyfin
+        widget:
+          type: jellyfin
+          url: http://jellyfin:8096
+          key: "{{HOMEPAGE_VAR_JELLYFIN_API_KEY}}"
+          enableBlocks: true
+
+- Files:
+    - Syncthing:
+        href: https://syncthing.woggles.work
+        description: File synchronization
+        icon: syncthing
+        widget:
+          type: syncthing
+          url: http://syncthing:8384

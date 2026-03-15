@@ -1,12 +1,11 @@
 #!/bin/bash
 
-# Home Network Server - Phase 1 Setup Script
-# Sets up Pi-hole MVP
+# Home Network Server Setup Script
 
 set -e
 
-echo "🏠 Home Network Server - Phase 1 Setup"
-echo "======================================"
+echo "🏠 Home Network Server Setup"
+echo "=============================="
 echo ""
 
 # Colors for output
@@ -83,6 +82,10 @@ echo ""
 echo "📁 Creating necessary directories..."
 mkdir -p pihole/etc
 mkdir -p pihole/etc-dnsmasq.d
+mkdir -p jellyfin/config
+mkdir -p jellyfin/cache
+mkdir -p syncthing/config
+mkdir -p traefik/dynamic
 
 # Set proper permissions
 echo "🔐 Setting permissions..."
@@ -90,6 +93,13 @@ chmod 755 pihole/etc
 chmod 755 pihole/etc-dnsmasq.d
 
 echo -e "${GREEN}✅ Directories created${NC}"
+echo ""
+
+# Set up Traefik certificate storage
+echo "🔐 Setting up Traefik certificate storage..."
+touch traefik/letsencrypt/acme.json
+chmod 600 traefik/letsencrypt/acme.json
+echo -e "${GREEN}✅ acme.json permissions set (600 required by Traefik)${NC}"
 echo ""
 
 # Get server IP
@@ -140,32 +150,30 @@ echo "📋 Next Steps:"
 echo "=============="
 echo ""
 echo "1. Edit .env file with your settings:"
-echo "   - Set PIHOLE_PASSWORD (change from default!)"
-echo "   - Set TZ to your timezone"
-echo "   - Set DOMAIN if different from home.local"
+echo "   - Set PIHOLE_PASSWORD"
+echo "   - Set ADMIN_EMAIL (for Let's Encrypt notifications)"
+echo "   - Set CF_DNS_API_TOKEN (Cloudflare API token for DNS-01 ACME)"
+echo "   - Set RENDER_GID (run: getent group render | cut -d: -f3)"
 if [ -n "$SERVER_IP" ] && [ "$SERVER_IP" != "" ]; then
-    echo "   - SERVER_IP has been auto-detected and set to: $SERVER_IP"
+    echo "   - SERVER_IP auto-detected: $SERVER_IP"
 fi
 echo ""
-echo "2. Configure your router to use Pi-hole as DNS server:"
-echo "   - Log into your router's admin interface"
-echo "   - Find DNS settings (usually in DHCP or Network settings)"
-echo "   - Set Primary DNS to: $SERVER_IP"
-echo "   - Set Secondary DNS to: 8.8.8.8 (or 1.1.1.1)"
-echo "   - Save and restart router if needed"
+echo "2. In Cloudflare dashboard (dash.cloudflare.com):"
+echo "   - Add A record: woggles.work → $SERVER_IP (DNS only, grey cloud)"
+echo "   - Add A record: *.woggles.work → $SERVER_IP (DNS only, grey cloud)"
 echo ""
-echo "3. Start Pi-hole service:"
+echo "3. Start services (staging certs first):"
 echo "   docker compose up -d"
 echo ""
-echo "4. Access Pi-hole admin interface:"
-echo "   http://$SERVER_IP/admin"
-echo "   (Password is set in PIHOLE_PASSWORD in .env file)"
+echo "4. Verify Traefik gets a staging cert, then switch to production:"
+echo "   Edit traefik/traefik.yml — comment out caServer staging line, uncomment production"
+echo "   docker compose restart traefik"
 echo ""
-echo "5. Verify Pi-hole is working:"
-echo "   - Check that devices on your network are using Pi-hole DNS"
-echo "   - Visit Pi-hole dashboard and check Query Log"
-echo "   - Test ad-blocking by visiting a site with ads"
-echo ""
-echo "📖 For more information, see PLANNING.md"
+echo "5. Access your services:"
+echo "   https://homepage.woggles.work  — Dashboard"
+echo "   https://pihole.woggles.work    — Pi-hole admin"
+echo "   https://traefik.woggles.work   — Traefik dashboard"
+echo "   https://jellyfin.woggles.work  — Media server"
+echo "   https://syncthing.woggles.work — File sync"
 echo ""
 

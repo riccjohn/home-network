@@ -1,0 +1,5 @@
+---
+# Docker integration via socket proxy (read-only, no root required)
+my-docker:
+  host: dockerproxy
+  port: 2375
