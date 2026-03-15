@@ -86,6 +86,7 @@ services:
       - HOMEPAGE_ALLOWED_HOSTS=homepage.woggles.work
       - HOMEPAGE_VAR_PIHOLE_API_KEY=${PIHOLE_API_KEY:-}
       - HOMEPAGE_VAR_JELLYFIN_API_KEY=${JELLYFIN_API_KEY:-}
+      - HOMEPAGE_VAR_PORTAINER_API_KEY=${PORTAINER_API_KEY:-}
       - DOCKER_HOST=tcp://dockerproxy:2375
     networks:
       - proxy
