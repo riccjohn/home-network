@@ -130,6 +130,22 @@ If any service fails, the script skips it and prints instructions. Re-run it aft
 
 **FileBrowser** default login is `admin` / `admin` — change the password immediately after first login at `https://files.woggles.work`.
 
+## Updating
+
+After pulling changes, run the update script to provision any new directories, pull fresh images, and restart only changed containers:
+
+```bash
+./scripts/update.sh
+```
+
+To force-recreate all containers (e.g. after a major config change):
+
+```bash
+./scripts/update.sh --all
+```
+
+The script runs in order: `git pull` → `setup.sh` (new dirs/files) → `docker compose pull` → `docker compose up -d` → image prune. A service status table is printed at the end.
+
 ## Hardware Transcoding
 
 Jellyfin uses Intel VA-API on the Haswell i3-4130T. Find the render group ID and set it in `.env`:
@@ -147,6 +163,7 @@ home-network/
 ├── .env.example
 ├── scripts/
 │   ├── setup.sh                # initial setup
+│   ├── update.sh               # pull changes and redeploy
 │   └── post-setup.sh           # grab API keys after first run
 ├── pihole/
 │   └── etc-dnsmasq.d/
