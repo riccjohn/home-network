@@ -21,6 +21,10 @@
           url: https://traefik.woggles.work
 
 - Infrastructure:
+    - Tailscale:
+        href: https://login.tailscale.com/admin
+        description: VPN and remote access
+        icon: tailscale
     - Portainer:
         href: https://portainer.woggles.work
         description: Docker container management

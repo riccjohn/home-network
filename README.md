@@ -95,7 +95,7 @@ sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 ```
 
-No router port forwarding needed — all access is LAN-only. External access will be added via Tailscale in a future phase.
+No router port forwarding needed — all access is LAN-only. Remote access is handled by Tailscale (see step 9).
 
 ### 7. Start services
 
@@ -130,6 +130,26 @@ If any service fails, the script skips it and prints instructions. Re-run it aft
 
 **FileBrowser** generates a random password on first start. Find it with `docker logs filebrowser` — look for "User 'admin' initialized with randomly generated password". Log in at `https://files.woggles.work` and change it immediately.
 
+### 9. Enable remote access via Tailscale
+
+The setup script installs Tailscale automatically on Linux. To activate it, authenticate with your Tailscale account:
+
+```bash
+sudo tailscale up --ssh
+```
+
+Tailscale will print a URL — open it in a browser and authorize the device. The `--ssh` flag enables Tailscale SSH, so you can connect from anywhere using the server's Tailscale IP without exposing port 22.
+
+```bash
+# Confirm it's connected and get the Tailscale IP
+tailscale status
+
+# From any device with Tailscale installed (e.g. your laptop):
+ssh john@<tailscale-ip>
+```
+
+See [docs/tailscale.md](docs/tailscale.md) for security recommendations and managing device access.
+
 ## Updating
 
 After pulling changes, run the update script to provision any new directories, pull fresh images, and restart only changed containers:
@@ -161,6 +181,8 @@ getent group render | cut -d: -f3
 home-network/
 ├── docker-compose.yml
 ├── .env.example
+├── docs/
+│   └── tailscale.md            # Tailscale remote access guide
 ├── scripts/
 │   ├── setup.sh                # initial setup
 │   ├── update.sh               # pull changes and redeploy
@@ -187,7 +209,3 @@ home-network/
     ├── database/               # filebrowser database (gitignored)
     └── config/                 # filebrowser settings (gitignored)
 ```
-
-## Future
-
-Tailscale remote access planned as a future phase.
