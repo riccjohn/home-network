@@ -88,11 +88,13 @@ mkdir -p syncthing/config
 mkdir -p traefik/dynamic
 mkdir -p filebrowser/database
 mkdir -p filebrowser/config
+mkdir -p wallabag/data
 
 # Set proper permissions
 echo "🔐 Setting permissions..."
 chmod 777 filebrowser/database
 chmod 777 filebrowser/config
+chmod 777 wallabag/data
 
 echo -e "${GREEN}✅ Directories created${NC}"
 echo ""
@@ -209,6 +211,23 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
     echo ""
 fi
 
+# Generate Wallabag secret if not already set
+echo "🔐 Setting up Wallabag secret..."
+if grep -q "^WALLABAG_SECRET=.\+" .env 2>/dev/null; then
+    echo -e "${GREEN}✅ WALLABAG_SECRET already set in .env${NC}"
+else
+    WALLABAG_SECRET=$(openssl rand -hex 32)
+    if grep -q "^WALLABAG_SECRET=" .env; then
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            sed -i '' "s|^WALLABAG_SECRET=.*|WALLABAG_SECRET=$WALLABAG_SECRET|" .env
+        else
+            sed -i "s|^WALLABAG_SECRET=.*|WALLABAG_SECRET=$WALLABAG_SECRET|" .env
+        fi
+    else
+        echo "WALLABAG_SECRET=$WALLABAG_SECRET" >> .env
+    fi
+    echo -e "${GREEN}✅ WALLABAG_SECRET generated and written to .env${NC}"
+fi
 echo ""
 echo -e "${GREEN}✅ Setup complete!${NC}"
 echo ""
@@ -243,6 +262,7 @@ echo "   https://traefik.woggles.work   — Traefik dashboard"
 echo "   https://jellyfin.woggles.work  — Media server"
 echo "   https://syncthing.woggles.work — File sync"
 echo "   https://files.woggles.work     — FileBrowser (random password — run: docker logs filebrowser)"
+echo "   https://wallabag.woggles.work  — Read-it-later (default login: wallabag/wallabag — change immediately)"
 echo ""
 echo "6. Enable Tailscale remote access:"
 echo "   sudo tailscale up --ssh"

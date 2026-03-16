@@ -60,3 +60,9 @@
         href: https://files.woggles.work
         description: Drag-and-drop file transfer
         icon: filebrowser
+
+- Reading:
+    - Wallabag:
+        href: https://wallabag.woggles.work
+        description: Read-it-later
+        icon: wallabag
