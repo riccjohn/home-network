@@ -165,6 +165,50 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
     echo ""
 fi
 
+# Set up Traefik dashboard BasicAuth (Linux only)
+if [[ "$OSTYPE" != "darwin"* ]]; then
+    echo "🔐 Setting up Traefik dashboard BasicAuth..."
+
+    # Check if already set in .env
+    if grep -q "^TRAEFIK_DASHBOARD_USERS=.\+" .env 2>/dev/null; then
+        echo -e "${GREEN}✅ TRAEFIK_DASHBOARD_USERS already set in .env${NC}"
+    else
+        # Install apache2-utils if htpasswd is not available
+        if ! command -v htpasswd &> /dev/null; then
+            echo "   htpasswd not found. Installing apache2-utils..."
+            sudo apt-get install -y apache2-utils
+        fi
+
+        read -s -p "   Enter a password for the Traefik dashboard (username: admin): " TRAEFIK_PASS
+        echo
+        HTPASSWD_ENTRY=$(htpasswd -nbB admin "$TRAEFIK_PASS")
+        # Escape $ → $$ for Docker Compose label interpolation
+        ESCAPED=$(echo "$HTPASSWD_ENTRY" | sed 's/\$/\$\$/g')
+
+        # Write TRAEFIK_DASHBOARD_USERS (hashed) into .env
+        if grep -q "^TRAEFIK_DASHBOARD_USERS=" .env; then
+            sed -i "s|^TRAEFIK_DASHBOARD_USERS=.*|TRAEFIK_DASHBOARD_USERS=$ESCAPED|" .env
+        else
+            echo "TRAEFIK_DASHBOARD_USERS=$ESCAPED" >> .env
+        fi
+
+        # Write plain-text credentials for Homepage widget
+        if grep -q "^TRAEFIK_USERNAME=" .env; then
+            sed -i "s|^TRAEFIK_USERNAME=.*|TRAEFIK_USERNAME=admin|" .env
+        else
+            echo "TRAEFIK_USERNAME=admin" >> .env
+        fi
+        if grep -q "^TRAEFIK_PASSWORD=" .env; then
+            sed -i "s|^TRAEFIK_PASSWORD=.*|TRAEFIK_PASSWORD=$TRAEFIK_PASS|" .env
+        else
+            echo "TRAEFIK_PASSWORD=$TRAEFIK_PASS" >> .env
+        fi
+
+        echo -e "${GREEN}✅ Traefik dashboard credentials set in .env${NC}"
+    fi
+    echo ""
+fi
+
 echo ""
 echo -e "${GREEN}✅ Setup complete!${NC}"
 echo ""
@@ -176,6 +220,7 @@ echo "   - Set PIHOLE_PASSWORD"
 echo "   - Set ADMIN_EMAIL (for Let's Encrypt notifications)"
 echo "   - Set CF_DNS_API_TOKEN (Cloudflare API token for DNS-01 ACME)"
 echo "   - Set RENDER_GID (run: getent group render | cut -d: -f3)"
+echo "   - TRAEFIK_DASHBOARD_USERS: set by this script (re-run to change)"
 if [ -n "$SERVER_IP" ] && [ "$SERVER_IP" != "" ]; then
     echo "   - SERVER_IP auto-detected: $SERVER_IP"
 fi

@@ -2,7 +2,14 @@
 
 ## Before creating a PR
 
-Always run `./scripts/lint-config.sh` and confirm it exits clean before opening a pull request.
+Before opening a pull request, work through this checklist:
+
+- [ ] Does `README.md` need a new env var, setup step, or service entry?
+- [ ] Does any file in `docs/` need updating (or does a new doc belong there)?
+- [ ] Does `.env.example` need a new variable with a comment?
+- [ ] Does any script in `scripts/` need updating to reflect the change?
+
+Then run `./scripts/lint-config.sh` and confirm it exits clean.
 The script catches two classes of mismatch that cause silent runtime failures:
 
 1. A `{{HOMEPAGE_VAR_*}}` reference in `homepage/config/*.yaml` that is not wired into `docker-compose.yml`

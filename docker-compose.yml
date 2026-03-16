@@ -59,6 +59,8 @@ services:
       - "traefik.http.routers.traefik-dashboard.tls.domains[0].main=woggles.work"
       - "traefik.http.routers.traefik-dashboard.tls.domains[0].sans=*.woggles.work"
       - "traefik.http.routers.traefik-dashboard.service=api@internal"
+      - "traefik.http.routers.traefik-dashboard.middlewares=dashboard-auth"
+      - "traefik.http.middlewares.dashboard-auth.basicauth.users=${TRAEFIK_DASHBOARD_USERS}"
 
   dockerproxy:
     container_name: dockerproxy
@@ -88,6 +90,8 @@ services:
       - HOMEPAGE_VAR_JELLYFIN_API_KEY=${JELLYFIN_API_KEY:-}
       - HOMEPAGE_VAR_PORTAINER_API_KEY=${PORTAINER_API_KEY:-}
       - HOMEPAGE_VAR_PORTAINER_ENV_ID=${PORTAINER_ENV_ID:-}
+      - HOMEPAGE_VAR_TRAEFIK_USERNAME=${TRAEFIK_USERNAME:-}
+      - HOMEPAGE_VAR_TRAEFIK_PASSWORD=${TRAEFIK_PASSWORD:-}
       - DOCKER_HOST=tcp://dockerproxy:2375
     networks:
       - proxy
