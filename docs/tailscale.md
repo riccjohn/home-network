@@ -98,6 +98,8 @@ http://<tailscale-ip>:8080/admin
 
 These have no host port bindings — they are only accessible through Traefik on the home network (`*.woggles.work`). There is no remote access path for these services without additional configuration. They are admin-only tools and rarely need remote access.
 
+The Traefik dashboard (`traefik.woggles.work`) requires BasicAuth credentials even on the LAN. Set `TRAEFIK_DASHBOARD_USERS` in `.env` before starting Traefik (see README step 2).
+
 ## Security recommendations
 
 - **Enable 2FA** on your Tailscale account (under Settings → Account). This is the primary credential protecting remote access.
