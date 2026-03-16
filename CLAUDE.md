@@ -14,6 +14,22 @@ If a new service or widget adds variables, update **all three** files together:
 - `docker-compose.yml` homepage service `environment:` block
 - `.env.example` (with a comment explaining where to get the value)
 
+## Session initialization
+
+At the start of every work session:
+
+1. `git log --oneline -10` — understand recent changes
+2. Read `.claude/tasks.json` — find the in-progress or next `todo` task
+3. Work only on that task; do not self-assign new work without asking the user
+
+## Task tracking
+
+Tasks live in `.claude/tasks.json`. Rules:
+
+- You may **only** change the `status` field (`todo` → `in_progress` → `done`)
+- Never rewrite `description`, `acceptance_criteria`, or `steps`
+- To add a new task, ask the user — do not create tasks unilaterally
+
 ## Project layout
 
 - `docker-compose.yml` — all services; single `proxy` bridge network

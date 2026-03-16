@@ -1,0 +1,4 @@
+{
+  "_note": "Agents may only change the 'status' field. Never rewrite description, acceptance_criteria, or steps. Valid statuses: todo | in_progress | done.",
+  "tasks": []
+}
