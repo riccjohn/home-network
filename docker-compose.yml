@@ -187,3 +187,30 @@ services:
       - "traefik.http.routers.syncthing.entrypoints=websecure"
       - "traefik.http.routers.syncthing.tls.certresolver=cloudflare"
       - "traefik.http.services.syncthing.loadbalancer.server.port=8384"
+
+  wallabag:
+    container_name: wallabag
+    image: wallabag/wallabag:2.6.14
+    # To upgrade: bump image tag, then run:
+    #   docker exec wallabag php bin/console doctrine:migrations:migrate --env=prod
+    environment:
+      - SYMFONY__ENV__DOMAIN_NAME=https://wallabag.woggles.work
+      - SYMFONY__ENV__SECRET=${WALLABAG_SECRET}
+      - SYMFONY__ENV__DATABASE_DRIVER=pdo_sqlite
+      - SYMFONY__ENV__FOSUSER_REGISTRATION=false
+      - POPULATE_DATABASE=True
+    volumes:
+      - ./wallabag/data:/var/www/wallabag/data
+      - wallabag_images:/var/www/wallabag/web/assets/images
+    networks:
+      - proxy
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wallabag.rule=Host(`wallabag.woggles.work`)"
+      - "traefik.http.routers.wallabag.entrypoints=websecure"
+      - "traefik.http.routers.wallabag.tls.certresolver=cloudflare"
+      - "traefik.http.services.wallabag.loadbalancer.server.port=80"
+
+volumes:
+  wallabag_images:
