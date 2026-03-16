@@ -94,6 +94,7 @@ mkdir -p wallabag/data
 echo "🔐 Setting permissions..."
 chmod 777 filebrowser/database
 chmod 777 filebrowser/config
+chmod 777 wallabag/data
 
 echo -e "${GREEN}✅ Directories created${NC}"
 echo ""
@@ -227,8 +228,6 @@ else
     fi
     echo -e "${GREEN}✅ WALLABAG_SECRET generated and written to .env${NC}"
 fi
-echo ""
-
 echo ""
 echo -e "${GREEN}✅ Setup complete!${NC}"
 echo ""

@@ -195,7 +195,7 @@ services:
     #   docker exec wallabag php bin/console doctrine:migrations:migrate --env=prod
     environment:
       - SYMFONY__ENV__DOMAIN_NAME=https://wallabag.woggles.work
-      - SYMFONY__ENV__SECRET=${WALLABAG_SECRET}
+      - SYMFONY__ENV__SECRET=${WALLABAG_SECRET:-}
       - SYMFONY__ENV__DATABASE_DRIVER=pdo_sqlite
       - SYMFONY__ENV__FOSUSER_REGISTRATION=false
       - POPULATE_DATABASE=True
