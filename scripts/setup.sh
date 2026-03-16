@@ -179,19 +179,32 @@ if [[ "$OSTYPE" != "darwin"* ]]; then
             sudo apt-get install -y apache2-utils
         fi
 
-        echo "   Enter a password for the Traefik dashboard (username: admin):"
-        HTPASSWD_ENTRY=$(htpasswd -nB admin)
+        read -s -p "   Enter a password for the Traefik dashboard (username: admin): " TRAEFIK_PASS
+        echo
+        HTPASSWD_ENTRY=$(htpasswd -nbB admin "$TRAEFIK_PASS")
         # Escape $ → $$ for Docker Compose label interpolation
         ESCAPED=$(echo "$HTPASSWD_ENTRY" | sed 's/\$/\$\$/g')
 
-        # Write into .env
+        # Write TRAEFIK_DASHBOARD_USERS (hashed) into .env
         if grep -q "^TRAEFIK_DASHBOARD_USERS=" .env; then
             sed -i "s|^TRAEFIK_DASHBOARD_USERS=.*|TRAEFIK_DASHBOARD_USERS=$ESCAPED|" .env
         else
             echo "TRAEFIK_DASHBOARD_USERS=$ESCAPED" >> .env
         fi
 
-        echo -e "${GREEN}✅ TRAEFIK_DASHBOARD_USERS set in .env${NC}"
+        # Write plain-text credentials for Homepage widget
+        if grep -q "^TRAEFIK_USERNAME=" .env; then
+            sed -i "s|^TRAEFIK_USERNAME=.*|TRAEFIK_USERNAME=admin|" .env
+        else
+            echo "TRAEFIK_USERNAME=admin" >> .env
+        fi
+        if grep -q "^TRAEFIK_PASSWORD=" .env; then
+            sed -i "s|^TRAEFIK_PASSWORD=.*|TRAEFIK_PASSWORD=$TRAEFIK_PASS|" .env
+        else
+            echo "TRAEFIK_PASSWORD=$TRAEFIK_PASS" >> .env
+        fi
+
+        echo -e "${GREEN}✅ Traefik dashboard credentials set in .env${NC}"
     fi
     echo ""
 fi
