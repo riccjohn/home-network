@@ -42,17 +42,17 @@ cp .env.example .env
 
 Edit `.env` and fill in:
 
-| Variable                  | How to get it                                                                                |
-| ------------------------- | -------------------------------------------------------------------------------------------- |
-| `PIHOLE_PASSWORD`         | Choose a password                                                                            |
-| `ADMIN_EMAIL`             | Your email — used for Let's Encrypt expiry notices                                           |
-| `CF_DNS_API_TOKEN`        | See step 3 below                                                                             |
-| `TRAEFIK_DASHBOARD_USERS` | Run `htpasswd -nB admin`, escape each `$` as `$$` — see `.env.example` for full instructions |
-| `RENDER_GID`              | Run `getent group render \| cut -d: -f3` on the server                                       |
-| `SERVER_IP`               | Auto-detected by setup script; verify it's correct                                           |
-| `MEDIA_PATH`              | Path to your media drive (e.g. `/mnt/media`)                                                 |
-| `SYNC_PATH`               | Path to your sync drive (e.g. `/mnt/sync`)                                                   |
-| `FILEBROWSER_PATH`        | Path FileBrowser serves (e.g. `/mnt/data`)                                                   |
+| Variable                  | How to get it                                           |
+| ------------------------- | ------------------------------------------------------- |
+| `PIHOLE_PASSWORD`         | Choose a password                                       |
+| `ADMIN_EMAIL`             | Your email — used for Let's Encrypt expiry notices      |
+| `CF_DNS_API_TOKEN`        | See step 3 below                                        |
+| `TRAEFIK_DASHBOARD_USERS` | Set automatically by `setup.sh` (prompted during setup) |
+| `RENDER_GID`              | Run `getent group render \| cut -d: -f3` on the server  |
+| `SERVER_IP`               | Auto-detected by setup script; verify it's correct      |
+| `MEDIA_PATH`              | Path to your media drive (e.g. `/mnt/media`)            |
+| `SYNC_PATH`               | Path to your sync drive (e.g. `/mnt/sync`)              |
+| `FILEBROWSER_PATH`        | Path FileBrowser serves (e.g. `/mnt/data`)              |
 
 `PIHOLE_API_KEY`, `JELLYFIN_API_KEY`, `PORTAINER_API_KEY`, and `PORTAINER_ENV_ID` can be left empty until after first run (see step 7).
 
