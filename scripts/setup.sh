@@ -147,6 +147,26 @@ else
     echo -e "${YELLOW}   You'll need to set SERVER_IP manually in .env file${NC}"
 fi
 
+# Install Tailscale (Linux only)
+if [[ "$OSTYPE" != "darwin"* ]]; then
+    echo "🔒 Checking Tailscale installation..."
+    if command -v tailscale &> /dev/null; then
+        echo -e "${GREEN}✅ Tailscale already installed ($(tailscale version | head -n1))${NC}"
+    else
+        echo "   Tailscale is not installed."
+        read -p "   Install Tailscale now? (y/N) " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            curl -fsSL https://tailscale.com/install.sh | sh
+            echo -e "${GREEN}✅ Tailscale installed${NC}"
+        else
+            echo -e "${YELLOW}⚠️  Skipping Tailscale install. Run manually when ready:${NC}"
+            echo "   curl -fsSL https://tailscale.com/install.sh | sh"
+        fi
+    fi
+    echo ""
+fi
+
 echo ""
 echo -e "${GREEN}✅ Setup complete!${NC}"
 echo ""
@@ -180,4 +200,9 @@ echo "   https://traefik.woggles.work   — Traefik dashboard"
 echo "   https://jellyfin.woggles.work  — Media server"
 echo "   https://syncthing.woggles.work — File sync"
 echo "   https://files.woggles.work     — FileBrowser (random password — run: docker logs filebrowser)"
+echo ""
+echo "6. Enable Tailscale remote access:"
+echo "   sudo tailscale up --ssh"
+echo "   (Visit the printed URL to authenticate with your Tailscale account)"
+echo "   See docs/tailscale.md for full details."
 echo ""
