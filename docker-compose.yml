@@ -59,6 +59,8 @@ services:
       - "traefik.http.routers.traefik-dashboard.tls.domains[0].main=woggles.work"
       - "traefik.http.routers.traefik-dashboard.tls.domains[0].sans=*.woggles.work"
       - "traefik.http.routers.traefik-dashboard.service=api@internal"
+      - "traefik.http.routers.traefik-dashboard.middlewares=dashboard-auth"
+      - "traefik.http.middlewares.dashboard-auth.basicauth.users=${TRAEFIK_DASHBOARD_USERS}"
 
   dockerproxy:
     container_name: dockerproxy
