@@ -34,3 +34,5 @@ jellyfin/config/
 jellyfin/cache/
 syncthing/config/
 portainer/data/
+filebrowser/database/
+filebrowser/config/

@@ -128,7 +128,7 @@ The script handles:
 
 If any service fails, the script skips it and prints instructions. Re-run it after fixing the issue — it skips services that are already configured.
 
-**FileBrowser** default login is `admin` / `admin` — change the password immediately after first login at `https://files.woggles.work`.
+**FileBrowser** generates a random password on first start. Find it with `docker logs filebrowser` — look for "User 'admin' initialized with randomly generated password". Log in at `https://files.woggles.work` and change it immediately.
 
 ## Updating
 
@@ -184,7 +184,8 @@ home-network/
 ├── portainer/
 │   └── data/                   # portainer data (gitignored)
 └── filebrowser/
-    └── database.db             # filebrowser state (gitignored)
+    ├── database/               # filebrowser database (gitignored)
+    └── config/                 # filebrowser settings (gitignored)
 ```
 
 ## Future

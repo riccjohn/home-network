@@ -86,13 +86,15 @@ mkdir -p jellyfin/config
 mkdir -p jellyfin/cache
 mkdir -p syncthing/config
 mkdir -p traefik/dynamic
-mkdir -p filebrowser
-touch filebrowser/database.db
+mkdir -p filebrowser/database
+mkdir -p filebrowser/config
 
 # Set proper permissions
 echo "🔐 Setting permissions..."
 chmod 755 pihole/etc
 chmod 755 pihole/etc-dnsmasq.d
+chmod 777 filebrowser/database
+chmod 777 filebrowser/config
 
 echo -e "${GREEN}✅ Directories created${NC}"
 echo ""
@@ -177,5 +179,5 @@ echo "   https://pihole.woggles.work    — Pi-hole admin"
 echo "   https://traefik.woggles.work   — Traefik dashboard"
 echo "   https://jellyfin.woggles.work  — Media server"
 echo "   https://syncthing.woggles.work — File sync"
-echo "   https://files.woggles.work     — FileBrowser (default login: admin/admin — change immediately!)"
+echo "   https://files.woggles.work     — FileBrowser (random password — run: docker logs filebrowser)"
 echo ""
