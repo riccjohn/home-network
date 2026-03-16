@@ -41,3 +41,6 @@ jobs:
           SERVER_IP: 127.0.0.1
           ADMIN_EMAIL: test@example.com
         run: docker compose config
+
+      - name: Validate config consistency
+        run: bash scripts/lint-config.sh
