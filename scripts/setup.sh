@@ -86,8 +86,8 @@ mkdir -p jellyfin/config
 mkdir -p jellyfin/cache
 mkdir -p syncthing/config
 mkdir -p traefik/dynamic
-mkdir -p filebrowser
-touch filebrowser/database.db
+mkdir -p filebrowser/database
+mkdir -p filebrowser/config
 
 # Set proper permissions
 echo "🔐 Setting permissions..."

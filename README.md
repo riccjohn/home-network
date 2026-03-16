@@ -184,7 +184,8 @@ home-network/
 ├── portainer/
 │   └── data/                   # portainer data (gitignored)
 └── filebrowser/
-    └── database.db             # filebrowser state (gitignored)
+    ├── database/               # filebrowser database (gitignored)
+    └── config/                 # filebrowser settings (gitignored)
 ```
 
 ## Future
