@@ -91,8 +91,6 @@ mkdir -p filebrowser/config
 
 # Set proper permissions
 echo "🔐 Setting permissions..."
-chmod 755 pihole/etc
-chmod 755 pihole/etc-dnsmasq.d
 chmod 777 filebrowser/database
 chmod 777 filebrowser/config
 
