@@ -42,5 +42,15 @@ jobs:
           ADMIN_EMAIL: test@example.com
         run: docker compose config
 
+      - name: Validate docker-compose.dev.yml merge
+        env:
+          DOMAIN: test.local
+          TZ: UTC
+          PIHOLE_PASSWORD: test-password
+          PIHOLE_DNS: 8.8.8.8;1.1.1.1
+          SERVER_IP: 127.0.0.1
+          ADMIN_EMAIL: test@example.com
+        run: docker compose -f docker-compose.yml -f docker-compose.dev.yml config --quiet
+
       - name: Validate config consistency
         run: bash scripts/lint-config.sh
