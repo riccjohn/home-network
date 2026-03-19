@@ -9,7 +9,8 @@ api:
   dashboard: true
   insecure: true # No auth needed for local dev
 
-ping: {} # Enables GET /ping for health checks
+ping:
+  entryPoint: web # respond on :80 (mapped to host :8080) for health checks
 
 entryPoints:
   web:
