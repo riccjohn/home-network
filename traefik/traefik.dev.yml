@@ -1,0 +1,29 @@
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+log:
+  level: INFO
+
+api:
+  dashboard: true
+  insecure: true # No auth needed for local dev
+
+ping: {} # Enables GET /ping for health checks
+
+entryPoints:
+  web:
+    address: ":80"
+    # No HTTPS redirect in local dev
+  websecure:
+    address: ":443"
+
+# No certificatesResolvers — HTTP only, no ACME in local dev
+
+providers:
+  docker:
+    exposedByDefault: false
+    network: proxy
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true

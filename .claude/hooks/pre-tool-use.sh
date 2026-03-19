@@ -20,7 +20,7 @@ fi
 
 basename="${file_path##*/}"
 
-if [[ "$basename" == .env* && "$basename" != ".env.example" ]]; then
+if [[ "$basename" == .env* && "$basename" != ".env.example" && "$basename" != ".env.dev.example" ]]; then
   echo "BLOCKED: '$basename' may contain secrets and cannot be read or modified by agents."
   echo "Use .env.example for variable references and documentation instead."
   exit 2

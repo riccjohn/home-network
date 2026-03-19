@@ -1,0 +1,70 @@
+# docker-compose.dev.yml — Local development overrides
+# Usage: ./scripts/dev.sh up  (wraps the compose -f flags)
+#
+# Differences from production:
+#   - pihole disabled (requires host networking, Linux-only)
+#   - jellyfin disabled (requires /dev/dri render device, Linux-only)
+#   - Traefik: HTTP-only on :8080, no ACME/Cloudflare, insecure dashboard
+#   - All services expose native ports for direct localhost health checks
+#   - Data volumes redirect to .dev/data/ (project-local, gitignored)
+
+services:
+  pihole:
+    profiles: [prod] # disabled in local dev
+
+  jellyfin:
+    profiles: [prod] # disabled in local dev (requires /dev/dri device)
+
+  traefik:
+    # Override: restore default CMD (removes ACME email arg from production command)
+    command:
+      - traefik
+    ports:
+      - "8080:80"
+      - "8443:443"
+    environment:
+      # ACME is not configured in traefik.dev.yml; value is irrelevant
+      - CF_DNS_API_TOKEN=dev-disabled
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.dev.yml:/etc/traefik/traefik.yml:ro
+      # Use empty dynamic.dev/ to avoid cert resolver warnings from production tls.yml/services.yml
+      - ./traefik/dynamic.dev:/etc/traefik/dynamic:ro
+      - ./traefik/letsencrypt/acme.dev.json:/acme.json
+
+  homepage:
+    ports:
+      - "3000:3000"
+    environment:
+      - HOMEPAGE_ALLOWED_HOSTS=localhost
+
+  portainer:
+    ports:
+      - "127.0.0.1:9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./.dev/data/portainer:/data
+
+  filebrowser:
+    ports:
+      - "8081:80"
+    volumes:
+      - ./.dev/data/filebrowser/database:/database
+      - ./.dev/data/filebrowser/config:/config
+      - ./.dev/data/filebrowser/files:/srv
+
+  syncthing:
+    ports:
+      - "8384:8384"
+    volumes:
+      - ./.dev/data/syncthing:/config
+      - ./.dev/data/sync:/data1
+
+  wallabag:
+    ports:
+      - "8888:80"
+    volumes:
+      - ./.dev/data/wallabag:/var/www/wallabag/data
+      - ./.dev/data/wallabag-images:/var/www/wallabag/web/assets/images
+    environment:
+      - SYMFONY__ENV__DOMAIN_NAME=http://localhost:8888
