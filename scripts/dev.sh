@@ -62,10 +62,8 @@ ensure_dirs() {
     "$DEV_DATA/filebrowser/database"
     "$DEV_DATA/filebrowser/config"
     "$DEV_DATA/filebrowser/files"
-    "$DEV_DATA/syncthing"
     "$DEV_DATA/wallabag"
     "$DEV_DATA/wallabag-images"
-    "$DEV_DATA/sync"
     "$DEV_DATA/media"
   )
   for d in "${dirs[@]}"; do

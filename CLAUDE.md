@@ -52,16 +52,16 @@ Use this to run and test services locally before opening a PR.
 | Service     | URL                   | Notes                               |
 | ----------- | --------------------- | ----------------------------------- |
 | traefik     | http://localhost:8080 | HTTP only; dashboard at /dashboard/ |
-| homepage    | http://localhost:3000 |                                     |
+| homepage    | http://localhost:3001 |                                     |
 | portainer   | http://localhost:9000 |                                     |
 | filebrowser | http://localhost:8081 |                                     |
-| syncthing   | http://localhost:8384 |                                     |
 | wallabag    | http://localhost:8888 |                                     |
 
 **Services skipped in local dev:**
 
 - `pihole` — requires Linux host networking
 - `jellyfin` — requires `/dev/dri` render device
+- `syncthing` — sync ports (22000, 21027) conflict with a native Syncthing install
 
 **Known timing issue:** Wallabag runs a DB migration on first start and takes ~30s before it responds.
 If `health-check.sh` reports wallabag FAIL immediately after `up`, wait and re-run — it is not a real failure.

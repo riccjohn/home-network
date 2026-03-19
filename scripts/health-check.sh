@@ -41,10 +41,9 @@ printf "Local dev health checks\n"
 printf '%.0s─' {1..60}; echo
 
 run_check "traefik"     "http://localhost:8080/ping"
-run_check "homepage"    "http://localhost:3000"
+run_check "homepage"    "http://localhost:3001"
 run_check "portainer"   "http://localhost:9000/api/status"
 run_check "filebrowser" "http://localhost:8081"
-run_check "syncthing"   "http://localhost:8384/rest/noauth/health"
 run_check "wallabag"    "http://localhost:8888/login"
 
 printf '%.0s─' {1..60}; echo

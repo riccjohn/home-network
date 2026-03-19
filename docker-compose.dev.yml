@@ -34,7 +34,7 @@ services:
 
   homepage:
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       - HOMEPAGE_ALLOWED_HOSTS=localhost
 
@@ -54,11 +54,7 @@ services:
       - ./.dev/data/filebrowser/files:/srv
 
   syncthing:
-    ports:
-      - "8384:8384"
-    volumes:
-      - ./.dev/data/syncthing:/config
-      - ./.dev/data/sync:/data1
+    profiles: [prod] # disabled in local dev — sync ports conflict with native Syncthing install
 
   wallabag:
     ports:
