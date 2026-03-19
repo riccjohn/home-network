@@ -21,57 +21,16 @@ If a new service or widget adds variables, update **all three** files together:
 - `docker-compose.yml` homepage service `environment:` block
 - `.env.example` (with a comment explaining where to get the value)
 
-## Local dev environment
+## Diagnosing issues on the server
 
-Use this to run and test services locally before opening a PR.
-
-**Start the stack:**
+When something breaks after a deploy, collect logs and paste them into Claude:
 
 ```bash
-./scripts/dev.sh up       # creates .env.dev and .dev/data/ on first run
-./scripts/health-check.sh # verify all services respond
+./scripts/collect-logs.sh           # all services
+./scripts/collect-logs.sh jellyfin  # one service
 ```
 
-**Agentic test loop:**
-
-```bash
-# after making a change to a service's config or compose definition:
-./scripts/dev.sh restart <service>
-./scripts/health-check.sh <service>     # targeted check; exit 1 = still broken
-./scripts/dev.sh logs <service>          # read logs to diagnose failures
-```
-
-**Tear down:**
-
-```bash
-./scripts/dev.sh down
-```
-
-**Services available in local dev** (health check ports):
-
-| Service     | URL                   | Notes                       |
-| ----------- | --------------------- | --------------------------- |
-| traefik     | http://localhost:8080 | HTTP routing; ping at /ping |
-| homepage    | http://localhost:3001 |                             |
-| portainer   | http://localhost:9000 |                             |
-| filebrowser | http://localhost:8081 |                             |
-| wallabag    | http://localhost:8888 |                             |
-
-**Services skipped in local dev:**
-
-- `pihole` — requires Linux host networking
-- `jellyfin` — requires `/dev/dri` render device
-- `syncthing` — sync ports (22000, 21027) conflict with a native Syncthing install
-
-**Known timing issue:** Wallabag runs a DB migration on first start and takes ~30s before it responds.
-If `health-check.sh` reports wallabag FAIL immediately after `up`, wait and re-run — it is not a real failure.
-
-**Key files:**
-
-- `docker-compose.dev.yml` — compose overrides (ports, volumes, disabled services)
-- `traefik/traefik.dev.yml` — Traefik static config (HTTP only, no ACME)
-- `.env.dev.example` — dev env template (safe to read; copied to `.env.dev` on first run)
-- `.dev/` — local data directories (gitignored)
+The script outputs: container status, recent errors across all services, and the last 75 lines per service. Paste the full output as context and describe the symptom.
 
 ## Session initialization
 

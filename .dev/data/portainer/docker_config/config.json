@@ -1,0 +1,7 @@
+{
+  "HttpHeaders": {
+    "X-PortainerAgent-ManagerOperation": "1",
+    "X-PortainerAgent-PublicKey": "3059301306072a8648ce3d020106082a8648ce3d030107034200048a7e08de329e37226321b155bc30166a98cf2b5a82acbc2fd6997cd9c696ac2b2d27975323f1b2df2445b9707ddf8b145f4599584eb3a8e323eb86c0c1a6ebfc",
+    "X-PortainerAgent-Signature": "NHUP8KCXDIbBz8oFEcdDpOMlhH6gmd0thpKqMQt17KKa47Rzfatk01Pi3qoDme53QYyVnRsOS6ZE8YHMdItmCg"
+  }
+}
