@@ -151,6 +151,17 @@ ssh john@<tailscale-ip>
 
 See [docs/tailscale.md](docs/tailscale.md) for security recommendations and managing device access.
 
+## Diagnosing issues
+
+If something breaks after a deploy, collect logs from all running services:
+
+```bash
+./scripts/collect-logs.sh           # all services
+./scripts/collect-logs.sh jellyfin  # one service
+```
+
+The script outputs container status, recent errors, and the last 75 lines per service — useful context for debugging or sharing with Claude.
+
 ## Updating
 
 After pulling changes, run the update script to provision any new directories, pull fresh images, and restart only changed containers:
@@ -187,7 +198,8 @@ home-network/
 ├── scripts/
 │   ├── setup.sh                # initial setup
 │   ├── update.sh               # pull changes and redeploy
-│   └── post-setup.sh           # grab API keys after first run
+│   ├── post-setup.sh           # grab API keys after first run
+│   └── collect-logs.sh         # collect logs for debugging
 ├── pihole/
 │   └── etc-dnsmasq.d/
 │       └── 02-local-dns.conf   # wildcard DNS for *.woggles.work

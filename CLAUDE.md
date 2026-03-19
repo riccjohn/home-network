@@ -21,17 +21,6 @@ If a new service or widget adds variables, update **all three** files together:
 - `docker-compose.yml` homepage service `environment:` block
 - `.env.example` (with a comment explaining where to get the value)
 
-## Diagnosing issues on the server
-
-When something breaks after a deploy, collect logs and paste them into Claude:
-
-```bash
-./scripts/collect-logs.sh           # all services
-./scripts/collect-logs.sh jellyfin  # one service
-```
-
-The script outputs: container status, recent errors across all services, and the last 75 lines per service. Paste the full output as context and describe the symptom.
-
 ## Session initialization
 
 At the start of every work session:
