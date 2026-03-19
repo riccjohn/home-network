@@ -36,3 +36,5 @@ syncthing/config/
 portainer/data/
 filebrowser/database/
 filebrowser/config/
+.env.dev
+.dev/
