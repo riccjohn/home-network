@@ -11,6 +11,7 @@ set -uo pipefail
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
+GRAY='\033[0;90m'
 RESET='\033[0m'
 
 TIMEOUT=5
@@ -30,6 +31,13 @@ check() {
   fi
 }
 
+skip() {
+  local name="$1" reason="$2"
+  if [[ -z "$FILTER" || "$FILTER" == "$name" ]]; then
+    printf "${GRAY}  SKIP${RESET}  %-15s  %s\n" "$name" "$reason"
+  fi
+}
+
 run_check() {
   local name="$1"
   if [[ -z "$FILTER" || "$FILTER" == "$name" ]]; then
@@ -45,6 +53,9 @@ run_check "homepage"    "http://localhost:3001"
 run_check "portainer"   "http://localhost:9000/api/status"
 run_check "filebrowser" "http://localhost:8081"
 run_check "wallabag"    "http://localhost:8888/login"
+skip      "syncthing"   "disabled in dev (ports conflict with native install)"
+skip      "jellyfin"    "disabled in dev (requires /dev/dri device)"
+skip      "pihole"      "disabled in dev (requires Linux host networking)"
 
 printf '%.0s─' {1..60}; echo
 

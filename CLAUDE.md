@@ -49,13 +49,13 @@ Use this to run and test services locally before opening a PR.
 
 **Services available in local dev** (health check ports):
 
-| Service     | URL                   | Notes                               |
-| ----------- | --------------------- | ----------------------------------- |
-| traefik     | http://localhost:8080 | HTTP only; dashboard at /dashboard/ |
-| homepage    | http://localhost:3001 |                                     |
-| portainer   | http://localhost:9000 |                                     |
-| filebrowser | http://localhost:8081 |                                     |
-| wallabag    | http://localhost:8888 |                                     |
+| Service     | URL                   | Notes                              |
+| ----------- | --------------------- | ---------------------------------- |
+| traefik     | http://localhost:8082 | API/ping/dashboard (internal port) |
+| homepage    | http://localhost:3001 |                                    |
+| portainer   | http://localhost:9000 |                                    |
+| filebrowser | http://localhost:8081 |                                    |
+| wallabag    | http://localhost:8888 |                                    |
 
 **Services skipped in local dev:**
 
