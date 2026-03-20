@@ -6,6 +6,3 @@ docker-compose.yml      linguist-language=Dockerfile
 docker-compose.*.yml    linguist-language=Dockerfile
 traefik/traefik.yml     linguist-language=Dockerfile
 traefik/dynamic/*.yml   linguist-language=Dockerfile
-
-# Exclude lockfiles and generated node files from language stats
-pnpm-lock.yaml          linguist-generated=true
