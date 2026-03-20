@@ -1,6 +1,10 @@
 # Home Network Server
 
+[![CI](https://github.com/riccjohn/home-network/actions/workflows/ci.yml/badge.svg)](https://github.com/riccjohn/home-network/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Docker Compose](https://img.shields.io/badge/docker_compose-2496ED?logo=docker&logoColor=white)
+![Traefik](https://img.shields.io/badge/traefik_v3-24A1C1?logo=traefikproxy&logoColor=white)
+![Ubuntu](https://img.shields.io/badge/ubuntu_server-E95420?logo=ubuntu&logoColor=white)
 
 Self-hosted home server stack running on Ubuntu Server (Lenovo ThinkCentre), managed with Docker Compose. Traefik handles reverse proxying and wildcard TLS via Cloudflare DNS-01 challenge.
 
