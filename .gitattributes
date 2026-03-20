@@ -1,0 +1,8 @@
+# GitHub Linguist overrides
+# YAML is classified as a "data" language and hidden from the language bar.
+# Override Docker Compose and Traefik config to show as Dockerfile so the
+# container orchestration work is reflected in the repo stats.
+docker-compose.yml      linguist-language=Dockerfile
+docker-compose.*.yml    linguist-language=Dockerfile
+traefik/traefik.yml     linguist-language=Dockerfile
+traefik/dynamic/*.yml   linguist-language=Dockerfile
