@@ -228,6 +228,24 @@ else
     fi
     echo -e "${GREEN}✅ WALLABAG_SECRET generated and written to .env${NC}"
 fi
+
+# Generate KOReader Sync password salt if not already set
+echo "🔐 Setting up KOReader Sync password salt..."
+if grep -q "^KOSYNC_PASSWORD_SALT=.\+" .env 2>/dev/null; then
+    echo -e "${GREEN}✅ KOSYNC_PASSWORD_SALT already set in .env${NC}"
+else
+    KOSYNC_PASSWORD_SALT=$(openssl rand -hex 32)
+    if grep -q "^KOSYNC_PASSWORD_SALT=" .env; then
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            sed -i '' "s|^KOSYNC_PASSWORD_SALT=.*|KOSYNC_PASSWORD_SALT=$KOSYNC_PASSWORD_SALT|" .env
+        else
+            sed -i "s|^KOSYNC_PASSWORD_SALT=.*|KOSYNC_PASSWORD_SALT=$KOSYNC_PASSWORD_SALT|" .env
+        fi
+    else
+        echo "KOSYNC_PASSWORD_SALT=$KOSYNC_PASSWORD_SALT" >> .env
+    fi
+    echo -e "${GREEN}✅ KOSYNC_PASSWORD_SALT generated and written to .env${NC}"
+fi
 echo ""
 echo -e "${GREEN}✅ Setup complete!${NC}"
 echo ""
