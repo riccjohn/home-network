@@ -66,3 +66,7 @@
         href: https://wallabag.woggles.work
         description: Read-it-later
         icon: wallabag
+    - KOReader Sync:
+        href: https://kosync.woggles.work
+        description: KOReader reading progress sync
+        icon: si-koreader

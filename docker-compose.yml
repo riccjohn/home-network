@@ -212,5 +212,24 @@ services:
       - "traefik.http.routers.wallabag.tls.certresolver=cloudflare"
       - "traefik.http.services.wallabag.loadbalancer.server.port=80"
 
+  kosync:
+    container_name: kosync
+    image: ghcr.io/nperez0111/koreader-sync:v0.0.1
+    environment:
+      - TZ=${TZ:-America/New_York}
+      - PASSWORD_SALT=${KOSYNC_PASSWORD_SALT}
+    volumes:
+      - kosync-data:/app/data
+    networks:
+      - proxy
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kosync.rule=Host(`kosync.woggles.work`)"
+      - "traefik.http.routers.kosync.entrypoints=websecure"
+      - "traefik.http.routers.kosync.tls.certresolver=cloudflare"
+      - "traefik.http.services.kosync.loadbalancer.server.port=3000"
+
 volumes:
   wallabag_images:
+  kosync-data:

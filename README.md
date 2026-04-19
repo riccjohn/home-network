@@ -10,15 +10,16 @@ Self-hosted home server stack running on Ubuntu Server (Lenovo ThinkCentre), man
 
 ## Services
 
-| Service     | URL                               | Description          |
-| ----------- | --------------------------------- | -------------------- |
-| Homepage    | https://homepage.woggles.work     | Dashboard            |
-| Pi-hole     | https://pihole.woggles.work/admin | DNS ad-blocker       |
-| Traefik     | https://traefik.woggles.work      | Reverse proxy        |
-| Jellyfin    | https://jellyfin.woggles.work     | Media server         |
-| Syncthing   | https://syncthing.woggles.work    | File sync            |
-| Portainer   | https://portainer.woggles.work    | Container management |
-| FileBrowser | https://files.woggles.work        | File manager         |
+| Service       | URL                               | Description           |
+| ------------- | --------------------------------- | --------------------- |
+| Homepage      | https://homepage.woggles.work     | Dashboard             |
+| Pi-hole       | https://pihole.woggles.work/admin | DNS ad-blocker        |
+| Traefik       | https://traefik.woggles.work      | Reverse proxy         |
+| Jellyfin      | https://jellyfin.woggles.work     | Media server          |
+| Syncthing     | https://syncthing.woggles.work    | File sync             |
+| Portainer     | https://portainer.woggles.work    | Container management  |
+| FileBrowser   | https://files.woggles.work        | File manager          |
+| KOReader Sync | https://kosync.woggles.work       | Reading progress sync |
 
 ## Prerequisites
 
