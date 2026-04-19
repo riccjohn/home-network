@@ -136,7 +136,18 @@ If any service fails, the script skips it and prints instructions. Re-run it aft
 
 **FileBrowser** generates a random password on first start. Find it with `docker logs filebrowser` — look for "User 'admin' initialized with randomly generated password". Log in at `https://files.woggles.work` and change it immediately.
 
-### 9. Enable remote access via Tailscale
+### 9. Set up KOReader Sync
+
+Generate and add the password salt before starting the service:
+
+```bash
+echo "KOSYNC_PASSWORD_SALT=$(openssl rand -hex 32)" >> .env
+docker compose up -d kosync
+```
+
+Then in the KOReader app on each device: **Settings → Progress sync → Custom sync server** → enter `https://kosync.woggles.work` → Register with a username and password. Each device registers once and syncs automatically on open/close.
+
+### 10. Enable remote access via Tailscale
 
 The setup script installs Tailscale automatically on Linux. To activate it, authenticate with your Tailscale account:
 
