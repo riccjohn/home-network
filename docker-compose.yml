@@ -214,7 +214,7 @@ services:
 
   kosync:
     container_name: kosync
-    image: ghcr.io/nperez0111/koreader-sync:v0.0.1
+    image: ghcr.io/nperez0111/koreader-sync:latest
     environment:
       - TZ=${TZ:-America/New_York}
       - PASSWORD_SALT=${KOSYNC_PASSWORD_SALT}
