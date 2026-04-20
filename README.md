@@ -20,6 +20,7 @@ Self-hosted home server stack running on Ubuntu Server (Lenovo ThinkCentre), man
 | Portainer     | https://portainer.woggles.work    | Container management  |
 | FileBrowser   | https://files.woggles.work        | File manager          |
 | KOReader Sync | https://kosync.woggles.work       | Reading progress sync |
+| Calibre-Web   | https://calibre-web.woggles.work  | Ebook library         |
 
 ## Prerequisites
 
@@ -47,17 +48,18 @@ cp .env.example .env
 
 Edit `.env` and fill in:
 
-| Variable                  | How to get it                                           |
-| ------------------------- | ------------------------------------------------------- |
-| `PIHOLE_PASSWORD`         | Choose a password                                       |
-| `ADMIN_EMAIL`             | Your email — used for Let's Encrypt expiry notices      |
-| `CF_DNS_API_TOKEN`        | See step 3 below                                        |
-| `TRAEFIK_DASHBOARD_USERS` | Set automatically by `setup.sh` (prompted during setup) |
-| `RENDER_GID`              | Run `getent group render \| cut -d: -f3` on the server  |
-| `SERVER_IP`               | Auto-detected by setup script; verify it's correct      |
-| `MEDIA_PATH`              | Path to your media drive (e.g. `/mnt/media`)            |
-| `SYNC_PATH`               | Path to your sync drive (e.g. `/mnt/sync`)              |
-| `FILEBROWSER_PATH`        | Path FileBrowser serves (e.g. `/mnt/data`)              |
+| Variable                  | How to get it                                                             |
+| ------------------------- | ------------------------------------------------------------------------- |
+| `PIHOLE_PASSWORD`         | Choose a password                                                         |
+| `ADMIN_EMAIL`             | Your email — used for Let's Encrypt expiry notices                        |
+| `CF_DNS_API_TOKEN`        | See step 3 below                                                          |
+| `TRAEFIK_DASHBOARD_USERS` | Set automatically by `setup.sh` (prompted during setup)                   |
+| `RENDER_GID`              | Run `getent group render \| cut -d: -f3` on the server                    |
+| `SERVER_IP`               | Auto-detected by setup script; verify it's correct                        |
+| `MEDIA_PATH`              | Path to your media drive (e.g. `/mnt/media`)                              |
+| `SYNC_PATH`               | Path to your sync drive (e.g. `/mnt/sync`)                                |
+| `FILEBROWSER_PATH`        | Path FileBrowser serves (e.g. `/mnt/data`)                                |
+| `CALIBRE_PATH`            | Path to the Syncthing-synced Calibre library (must contain `metadata.db`) |
 
 `PIHOLE_API_KEY`, `JELLYFIN_API_KEY`, `PORTAINER_API_KEY`, and `PORTAINER_ENV_ID` can be left empty until after first run (see step 7).
 
@@ -147,7 +149,24 @@ docker compose up -d kosync
 
 Then in the KOReader app on each device: **Settings → Progress sync → Custom sync server** → enter `https://kosync.woggles.work` → Register with a username and password. Each device registers once and syncs automatically on open/close.
 
-### 10. Enable remote access via Tailscale
+### 10. Set up Calibre-Web
+
+Calibre-Web reads an existing Calibre library that is synced to the server via Syncthing. Set the path before starting the service:
+
+```bash
+echo "CALIBRE_PATH=/mnt/sync/calibre-library" >> .env  # adjust path to match your Syncthing setup
+docker compose up -d calibre-web
+```
+
+The library directory must contain a `metadata.db` file (created by the Calibre desktop app). The mount is **read-only** so Calibre-Web cannot corrupt the database while the desktop app is also active.
+
+**First-run setup:**
+
+1. Open `https://calibre-web.woggles.work` and complete the setup wizard
+2. When prompted for the database path, enter `/books` (the container's read-only mount point)
+3. Create an admin account — use these credentials as `CALIBREWEB_USERNAME` and `CALIBREWEB_PASSWORD` in `.env` (the Homepage widget uses them to show library stats)
+
+### 11. Enable remote access via Tailscale
 
 The setup script installs Tailscale automatically on Linux. To activate it, authenticate with your Tailscale account:
 

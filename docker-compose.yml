@@ -92,6 +92,8 @@ services:
       - HOMEPAGE_VAR_PORTAINER_ENV_ID=${PORTAINER_ENV_ID:-}
       - HOMEPAGE_VAR_TRAEFIK_USERNAME=${TRAEFIK_USERNAME:-}
       - HOMEPAGE_VAR_TRAEFIK_PASSWORD=${TRAEFIK_PASSWORD:-}
+      - HOMEPAGE_VAR_CALIBREWEB_USERNAME=${CALIBREWEB_USERNAME:-}
+      - HOMEPAGE_VAR_CALIBREWEB_PASSWORD=${CALIBREWEB_PASSWORD:-}
       - DOCKER_HOST=tcp://dockerproxy:2375
     networks:
       - proxy
@@ -229,6 +231,26 @@ services:
       - "traefik.http.routers.kosync.entrypoints=websecure"
       - "traefik.http.routers.kosync.tls.certresolver=cloudflare"
       - "traefik.http.services.kosync.loadbalancer.server.port=3000"
+
+  calibre-web:
+    container_name: calibre-web
+    image: lscr.io/linuxserver/calibre-web:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ:-America/New_York}
+    volumes:
+      - ./calibre-web/config:/config
+      - ${CALIBRE_PATH:-/mnt/sync/calibre-library}:/books:ro
+    networks:
+      - proxy
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.calibre-web.rule=Host(`calibre-web.woggles.work`)"
+      - "traefik.http.routers.calibre-web.entrypoints=websecure"
+      - "traefik.http.routers.calibre-web.tls.certresolver=cloudflare"
+      - "traefik.http.services.calibre-web.loadbalancer.server.port=8083"
 
 volumes:
   wallabag_images:
