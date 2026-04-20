@@ -85,6 +85,7 @@ mkdir -p pihole/etc-dnsmasq.d
 mkdir -p jellyfin/config
 mkdir -p jellyfin/cache
 mkdir -p syncthing/config
+mkdir -p calibre-web/config
 mkdir -p traefik/dynamic
 mkdir -p filebrowser/database
 mkdir -p filebrowser/config

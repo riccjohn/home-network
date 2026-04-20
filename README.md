@@ -20,6 +20,7 @@ Self-hosted home server stack running on Ubuntu Server (Lenovo ThinkCentre), man
 | Portainer     | https://portainer.woggles.work    | Container management  |
 | FileBrowser   | https://files.woggles.work        | File manager          |
 | KOReader Sync | https://kosync.woggles.work       | Reading progress sync |
+| Calibre-Web   | https://calibre-web.woggles.work  | Ebook library         |
 
 ## Prerequisites
 
@@ -147,7 +148,23 @@ docker compose up -d kosync
 
 Then in the KOReader app on each device: **Settings → Progress sync → Custom sync server** → enter `https://kosync.woggles.work` → Register with a username and password. Each device registers once and syncs automatically on open/close.
 
-### 10. Enable remote access via Tailscale
+### 10. Set up Calibre-Web
+
+Calibre-Web reads the Calibre library synced to the server via Syncthing. It mounts the same `SYNC_PATH` directory that Syncthing uses, so no extra path variable is needed.
+
+In the Syncthing UI, set your Calibre folder path to `/data1/Calibre_Library` (Syncthing's data mount inside the container). Then start the service:
+
+```bash
+docker compose up -d calibre-web
+```
+
+**First-run setup:**
+
+1. Open `https://calibre-web.woggles.work` and complete the setup wizard
+2. When prompted for the database path, enter `/sync/Calibre_Library` (adjust the subfolder name to match what you used in Syncthing)
+3. Create an admin account — use these credentials as `CALIBREWEB_USERNAME` and `CALIBREWEB_PASSWORD` in `.env` (the Homepage widget uses them to show library stats)
+
+### 11. Enable remote access via Tailscale
 
 The setup script installs Tailscale automatically on Linux. To activate it, authenticate with your Tailscale account:
 
