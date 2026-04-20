@@ -241,7 +241,7 @@ services:
       - TZ=${TZ:-America/New_York}
     volumes:
       - ./calibre-web/config:/config
-      - ${CALIBRE_PATH:-/mnt/sync/calibre-library}:/books:ro
+      - ${SYNC_PATH:-/mnt/sync}:/sync:ro
     networks:
       - proxy
     restart: unless-stopped
