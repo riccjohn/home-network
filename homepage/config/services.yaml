@@ -68,5 +68,4 @@
         icon: wallabag
     - KOReader Sync:
         href: https://kosync.woggles.work
-        description: KOReader reading progress sync
-        icon: si-koreader
+        description: Reading progress sync (no UI)
