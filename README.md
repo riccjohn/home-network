@@ -190,7 +190,7 @@ Cloudflare Tunnel exposes the Homepage dashboard publicly via `https://homepage.
 
 #### Step 1 — Create the tunnel and add the token to `.env`
 
-1. Go to [one.dash.cloudflare.com](https://one.dash.cloudflare.com) > **Networks** > **Tunnels**
+1. Go to [dash.cloudflare.com](https://dash.cloudflare.com) > **Zero Trust** > **Networks** > **Tunnels**
 2. Click **Create a tunnel** → choose **Cloudflared** → give it a name (e.g. `home-server`)
 3. Copy the tunnel token shown in the install command
 4. Add it to `.env`:
@@ -209,14 +209,15 @@ docker compose up -d cloudflared
 
 In the tunnel's **Public Hostnames** tab, add:
 
-| Field     | Value          |
-| --------- | -------------- |
-| Subdomain | `homepage`     |
-| Domain    | `woggles.work` |
-| Type      | `HTTPS`        |
-| URL       | `traefik`      |
+| Field              | Value          |
+| ------------------ | -------------- |
+| Subdomain          | `homepage`     |
+| Domain             | `woggles.work` |
+| Type               | `HTTPS`        |
+| URL                | `traefik`      |
+| Origin server name | `woggles.work` |
 
-> **Origin server name:** set to `woggles.work` so Traefik's SNI matches the wildcard cert.
+> **Origin server name** tells Traefik which SNI to expect, so it presents the correct `*.woggles.work` Let's Encrypt cert.
 > **TLS > SSL/TLS encryption mode:** set to **Full (Strict)** in the Cloudflare dashboard (**SSL/TLS** > **Overview**). This tells Cloudflare to verify the origin cert — required because Traefik presents the Let's Encrypt wildcard cert.
 
 Cloudflare creates a CNAME record for `homepage.woggles.work` pointing at the tunnel automatically. The existing wildcard A record (`*.woggles.work → 192.168.0.243`) is still valid and does **not** conflict — a specific CNAME takes precedence over a wildcard A record in DNS resolution.
@@ -225,7 +226,7 @@ Cloudflare creates a CNAME record for `homepage.woggles.work` pointing at the tu
 
 To require authentication before reaching the dashboard:
 
-1. Go to **Access** > **Applications** > **Add an application** → choose **Self-hosted**
+1. Go to [dash.cloudflare.com](https://dash.cloudflare.com) > **Zero Trust** > **Access** > **Applications** > **Add an application** → choose **Self-hosted**
 2. Set **Application domain** to `homepage.woggles.work`
 3. Under **Policies**, add a policy with action **Allow** and include rule **Emails** → add your email address
 4. Save — Cloudflare will now challenge any visitor with a one-time email passcode before forwarding them to the tunnel

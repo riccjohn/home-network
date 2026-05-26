@@ -254,7 +254,7 @@ services:
 
   cloudflared:
     container_name: cloudflared
-    image: cloudflare/cloudflared:latest
+    image: cloudflare/cloudflared:2026.5.1
     restart: unless-stopped
     command: tunnel run
     environment:
