@@ -184,6 +184,56 @@ ssh john@<tailscale-ip>
 
 See [docs/tailscale.md](docs/tailscale.md) for security recommendations and managing device access.
 
+### 12. Set up Cloudflare Tunnel (remote access without port forwarding)
+
+Cloudflare Tunnel exposes the Homepage dashboard publicly via `https://homepage.woggles.work` without opening any inbound ports. The tunnel runs as a container (`cloudflared`) managed by the Cloudflare dashboard — there is no local config file or credential file to maintain.
+
+#### Step 1 — Create the tunnel and add the token to `.env`
+
+1. Go to [one.dash.cloudflare.com](https://one.dash.cloudflare.com) > **Networks** > **Tunnels**
+2. Click **Create a tunnel** → choose **Cloudflared** → give it a name (e.g. `home-server`)
+3. Copy the tunnel token shown in the install command
+4. Add it to `.env`:
+
+```env
+CLOUDFLARE_TUNNEL_TOKEN=<paste token here>
+```
+
+Then start the container:
+
+```bash
+docker compose up -d cloudflared
+```
+
+#### Step 2 — Add a public hostname in the tunnel dashboard
+
+In the tunnel's **Public Hostnames** tab, add:
+
+| Field     | Value          |
+| --------- | -------------- |
+| Subdomain | `homepage`     |
+| Domain    | `woggles.work` |
+| Type      | `HTTPS`        |
+| URL       | `traefik`      |
+
+> **Origin server name:** set to `woggles.work` so Traefik's SNI matches the wildcard cert.
+> **TLS > SSL/TLS encryption mode:** set to **Full (Strict)** in the Cloudflare dashboard (**SSL/TLS** > **Overview**). This tells Cloudflare to verify the origin cert — required because Traefik presents the Let's Encrypt wildcard cert.
+
+Cloudflare creates a CNAME record for `homepage.woggles.work` pointing at the tunnel automatically. The existing wildcard A record (`*.woggles.work → 192.168.0.243`) is still valid and does **not** conflict — a specific CNAME takes precedence over a wildcard A record in DNS resolution.
+
+#### Step 3 — Restrict access with Cloudflare Access (email OTP)
+
+To require authentication before reaching the dashboard:
+
+1. Go to **Access** > **Applications** > **Add an application** → choose **Self-hosted**
+2. Set **Application domain** to `homepage.woggles.work`
+3. Under **Policies**, add a policy with action **Allow** and include rule **Emails** → add your email address
+4. Save — Cloudflare will now challenge any visitor with a one-time email passcode before forwarding them to the tunnel
+
+#### Step 4 — DNS (no action needed)
+
+Cloudflare manages the `homepage.woggles.work` CNAME record automatically when you save the public hostname in step 2. No manual DNS change is required.
+
 ## Updating
 
 After pulling changes, run the update script to provision any new directories, pull fresh images, and restart only changed containers:

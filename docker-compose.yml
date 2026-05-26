@@ -252,6 +252,16 @@ services:
       - "traefik.http.routers.calibre-web.tls.certresolver=cloudflare"
       - "traefik.http.services.calibre-web.loadbalancer.server.port=8083"
 
+  cloudflared:
+    container_name: cloudflared
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    networks:
+      - proxy
+
 volumes:
   wallabag_images:
   kosync-data:
