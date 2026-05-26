@@ -23,6 +23,7 @@ homepage/config/logs/
 # Claude Code
 .claude/scratch/
 .yaks/
+.light/
 craft-execution-log.md
 
 # OS files
