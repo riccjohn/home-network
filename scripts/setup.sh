@@ -90,6 +90,8 @@ mkdir -p traefik/dynamic
 mkdir -p filebrowser/database
 mkdir -p filebrowser/config
 mkdir -p wallabag/data
+mkdir -p beszel/hub_data
+mkdir -p beszel/agent_data
 
 # Set proper permissions
 echo "🔐 Setting permissions..."
