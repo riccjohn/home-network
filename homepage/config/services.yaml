@@ -48,6 +48,18 @@
           key: "{{HOMEPAGE_VAR_JELLYFIN_API_KEY}}"
           enableBlocks: true
 
+- Monitoring:
+    - Beszel:
+        href: https://beszel.woggles.work
+        description: Server resource monitoring
+        icon: beszel
+        widget:
+          type: beszel
+          url: http://beszel-hub:8090
+          username: "{{HOMEPAGE_VAR_BESZEL_USERNAME}}"
+          password: "{{HOMEPAGE_VAR_BESZEL_PASSWORD}}"
+          version: 2
+
 - Books:
     - Calibre-Web:
         href: https://calibre-web.woggles.work

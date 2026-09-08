@@ -10,17 +10,18 @@ Self-hosted home server stack running on Ubuntu Server (Lenovo ThinkCentre), man
 
 ## Services
 
-| Service       | URL                               | Description           |
-| ------------- | --------------------------------- | --------------------- |
-| Homepage      | https://homepage.woggles.work     | Dashboard             |
-| Pi-hole       | https://pihole.woggles.work/admin | DNS ad-blocker        |
-| Traefik       | https://traefik.woggles.work      | Reverse proxy         |
-| Jellyfin      | https://jellyfin.woggles.work     | Media server          |
-| Syncthing     | https://syncthing.woggles.work    | File sync             |
-| Portainer     | https://portainer.woggles.work    | Container management  |
-| FileBrowser   | https://files.woggles.work        | File manager          |
-| KOReader Sync | https://kosync.woggles.work       | Reading progress sync |
-| Calibre-Web   | https://calibre-web.woggles.work  | Ebook library         |
+| Service       | URL                               | Description                |
+| ------------- | --------------------------------- | -------------------------- |
+| Homepage      | https://homepage.woggles.work     | Dashboard                  |
+| Pi-hole       | https://pihole.woggles.work/admin | DNS ad-blocker             |
+| Traefik       | https://traefik.woggles.work      | Reverse proxy              |
+| Jellyfin      | https://jellyfin.woggles.work     | Media server               |
+| Syncthing     | https://syncthing.woggles.work    | File sync                  |
+| Portainer     | https://portainer.woggles.work    | Container management       |
+| FileBrowser   | https://files.woggles.work        | File manager               |
+| KOReader Sync | https://kosync.woggles.work       | Reading progress sync      |
+| Calibre-Web   | https://calibre-web.woggles.work  | Ebook library              |
+| Beszel        | https://beszel.woggles.work       | Server resource monitoring |
 
 ## Prerequisites
 
@@ -102,7 +103,7 @@ sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 ```
 
-No router port forwarding needed — all access is LAN-only. Remote access is handled by Tailscale (see step 9).
+No router port forwarding needed — all access is LAN-only. Remote access is handled by Tailscale (see step 12).
 
 ### 7. Start services
 
@@ -164,7 +165,21 @@ docker compose up -d calibre-web
 2. When prompted for the database path, enter `/sync/Calibre_Library` (adjust the subfolder name to match what you used in Syncthing)
 3. Create an admin account — use these credentials as `CALIBREWEB_USERNAME` and `CALIBREWEB_PASSWORD` in `.env` (the Homepage widget uses them to show library stats)
 
-### 11. Enable remote access via Tailscale
+### 11. Set up Beszel (server monitoring)
+
+```bash
+docker compose up -d beszel-hub
+```
+
+1. Visit `https://beszel.woggles.work`, create the superuser account — use as `BESZEL_USERNAME`/`BESZEL_PASSWORD` in `.env`
+2. In the hub UI, **Add System** — copy the generated Key and Token into `.env` as `BESZEL_AGENT_KEY`/`BESZEL_AGENT_TOKEN`
+3. Start the agent:
+
+```bash
+docker compose up -d beszel-agent
+```
+
+### 12. Enable remote access via Tailscale
 
 The setup script installs Tailscale automatically on Linux. To activate it, authenticate with your Tailscale account:
 
@@ -239,7 +254,10 @@ home-network/
 │   └── config/                 # syncthing config (gitignored)
 ├── portainer/
 │   └── data/                   # portainer data (gitignored)
-└── filebrowser/
-    ├── database/               # filebrowser database (gitignored)
-    └── config/                 # filebrowser settings (gitignored)
+├── filebrowser/
+│   ├── database/               # filebrowser database (gitignored)
+│   └── config/                 # filebrowser settings (gitignored)
+└── beszel/
+    ├── hub_data/                # beszel hub data (gitignored)
+    └── agent_data/              # beszel agent data (gitignored)
 ```

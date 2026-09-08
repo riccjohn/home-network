@@ -94,6 +94,8 @@ services:
       - HOMEPAGE_VAR_TRAEFIK_PASSWORD=${TRAEFIK_PASSWORD:-}
       - HOMEPAGE_VAR_CALIBREWEB_USERNAME=${CALIBREWEB_USERNAME:-}
       - HOMEPAGE_VAR_CALIBREWEB_PASSWORD=${CALIBREWEB_PASSWORD:-}
+      - HOMEPAGE_VAR_BESZEL_USERNAME=${BESZEL_USERNAME:-}
+      - HOMEPAGE_VAR_BESZEL_PASSWORD=${BESZEL_PASSWORD:-}
       - DOCKER_HOST=tcp://dockerproxy:2375
     networks:
       - proxy
@@ -251,6 +253,37 @@ services:
       - "traefik.http.routers.calibre-web.entrypoints=websecure"
       - "traefik.http.routers.calibre-web.tls.certresolver=cloudflare"
       - "traefik.http.services.calibre-web.loadbalancer.server.port=8083"
+
+  beszel-hub:
+    container_name: beszel-hub
+    image: henrygd/beszel:0.19.0
+    environment:
+      - APP_URL=https://beszel.woggles.work
+    volumes:
+      - ./beszel/hub_data:/beszel_data
+    networks:
+      - proxy
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.beszel.rule=Host(`beszel.woggles.work`)"
+      - "traefik.http.routers.beszel.entrypoints=websecure"
+      - "traefik.http.routers.beszel.tls.certresolver=cloudflare"
+      - "traefik.http.services.beszel.loadbalancer.server.port=8090"
+
+  beszel-agent:
+    container_name: beszel-agent
+    image: henrygd/beszel-agent:0.19.0
+    environment:
+      - HUB_URL=http://beszel-hub:8090
+      - KEY=${BESZEL_AGENT_KEY}
+      - TOKEN=${BESZEL_AGENT_TOKEN}
+    volumes:
+      - ./beszel/agent_data:/var/lib/beszel-agent
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - proxy
+    restart: unless-stopped
 
 volumes:
   wallabag_images:
