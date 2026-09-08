@@ -215,6 +215,41 @@ To force-recreate all containers (e.g. after a major config change):
 
 The script runs in order: `git pull` → `setup.sh` (new dirs/files) → `docker compose pull` → `docker compose up -d` → image prune. A service status table is printed at the end.
 
+## Releases & Rollback
+
+This is a solo home-lab project, so there's no CI/CD pipeline — just a lightweight tagging convention that marks a known-good point on `main` after each merge, in case a rollback is ever needed.
+
+**Tagging convention:** after merging a PR to `main`, tag the resulting commit with a date-based version:
+
+```bash
+git tag -a v2026.09.08 -m "Add Beszel server monitoring" && git push origin v2026.09.08
+```
+
+Use `vYYYY.MM.DD` format (not semver — this isn't a versioned library, it's a deployed date-stamped state). If multiple releases happen the same day, append `.2`, `.3`, etc. (e.g. `v2026.09.08.2`).
+
+**Rollback procedure:** to roll the server back to a known-good state:
+
+```bash
+git fetch --tags
+git checkout v2026.09.08
+./scripts/update.sh
+```
+
+This leaves the repo in a detached HEAD state pointing at that tag — fine for a rollback, but to resume normal work afterward run `git checkout main` again.
+
+**Caveat on image pinning:** rollback via git tag only restores `docker-compose.yml` and other tracked files to that point in time — it does **not** guarantee the same container images if a service uses an unpinned `:latest` tag, since `docker compose pull` fetches whatever `:latest` currently resolves to, not what it resolved to on the tagged date. The following services currently use `:latest` and so only have partial rollback fidelity:
+
+- `pihole`
+- `dockerproxy`
+- `homepage`
+- `portainer`
+- `filebrowser`
+- `syncthing`
+- `kosync`
+- `calibre-web`
+
+(`jellyfin` specifies no tag at all, which Docker also resolves to `:latest`, so it has the same caveat.) Services pinned to a specific tag (`traefik`, `wallabag`, `beszel-hub`, `beszel-agent`) have full rollback fidelity. Pinning the rest is a separate follow-up.
+
 ## Hardware Transcoding
 
 Jellyfin uses Intel VA-API on the Haswell i3-4130T. Find the render group ID and set it in `.env`:
