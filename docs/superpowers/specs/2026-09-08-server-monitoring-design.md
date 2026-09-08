@@ -17,7 +17,7 @@ Give visibility into server overload (CPU/mem/disk, container resource use) via 
 
 ## Why Beszel, and why no host networking
 
-Beszel's agent defaults to `network_mode: host` in its official examples, but its own docs state this is only required for *host network-interface throughput* stats and is explicitly optional ("If host network stats aren't needed, you can remove this requirement and map the port manually instead" — research artifact Finding 8). We only need CPU/mem/disk/container overload visibility, not network throughput, so both `beszel-hub` and `beszel-agent` run on the standard `proxy` bridge network like every other service except Pi-hole. This avoids the manual Traefik file-provider wiring and host-network/Traefik-dashboard risk that sank the original Netdata plan.
+Beszel's agent defaults to `network_mode: host` in its official examples, but its own docs state this is only required for _host network-interface throughput_ stats and is explicitly optional ("If host network stats aren't needed, you can remove this requirement and map the port manually instead" — research artifact Finding 8). We only need CPU/mem/disk/container overload visibility, not network throughput, so both `beszel-hub` and `beszel-agent` run on the standard `proxy` bridge network like every other service except Pi-hole. This avoids the manual Traefik file-provider wiring and host-network/Traefik-dashboard risk that sank the original Netdata plan.
 
 The agent has no web UI of its own — it's an outbound client to the hub over a private port — so it needs no Traefik route regardless of network mode.
 
@@ -26,6 +26,7 @@ The agent has no web UI of its own — it's an outbound client to the hub over a
 Two new services in `docker-compose.yml`:
 
 ### `beszel-hub`
+
 - Image: `henrygd/beszel:0.19.0` (pinned per repo convention)
 - Networks: `proxy`
 - Volumes: `./beszel/hub_data:/beszel_data`
@@ -34,6 +35,7 @@ Two new services in `docker-compose.yml`:
 - Persistent data dir created by `scripts/setup.sh` (mirrors `jellyfin/config`, `filebrowser/config`, etc.)
 
 ### `beszel-agent`
+
 - Image: `henrygd/beszel-agent:0.19.0`
 - Networks: `proxy`
 - Volumes:
@@ -79,6 +81,7 @@ New "Monitoring" group in `homepage/config/services.yaml`:
 Overview mode (no `systemId`) — shows systems/up counts across all monitored systems, which for this single-server stack is effectively an at-a-glance health card. `url` uses the container DNS name since Homepage and `beszel-hub` share the `proxy` network (confirmed pattern from research: bridge-network services use container names; only Pi-hole, the one host-network exception, uses a LAN IP).
 
 Per CLAUDE.md's three-file rule, wire the same credentials into:
+
 - `docker-compose.yml` homepage `environment:` block: `HOMEPAGE_VAR_BESZEL_USERNAME=${BESZEL_USERNAME:-}`, `HOMEPAGE_VAR_BESZEL_PASSWORD=${BESZEL_PASSWORD:-}`
 - `.env.example`: `BESZEL_USERNAME=` and `BESZEL_PASSWORD=` with a comment pointing at the hub's superuser account (created during setup)
 
@@ -99,6 +102,7 @@ BESZEL_AGENT_TOKEN=
 ## `scripts/setup.sh` changes
 
 Add to the directory-creation block:
+
 ```bash
 mkdir -p beszel/hub_data
 mkdir -p beszel/agent_data
