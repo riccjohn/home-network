@@ -178,6 +178,7 @@ services:
     volumes:
       - ./syncthing/config:/config
       - ${SYNC_PATH:-/mnt/sync}:/data1
+      - ${HERMES_VAULT_PATH:-/home/newton/hermes/vault}:/hermes-vault
     ports:
       - "22000:22000/tcp"
       - "22000:22000/udp"
