@@ -4,6 +4,7 @@ node_modules/
 
 # Environment files
 .env
+.env.bkup*
 
 # Docker
 .docker/
@@ -35,6 +36,8 @@ jellyfin/cache/
 syncthing/config/
 portainer/data/
 filebrowser/database/
+filebrowser/database.db
+wallabag/data/
 filebrowser/config/
 calibre-web/config/
 beszel/hub_data/
