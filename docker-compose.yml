@@ -85,6 +85,8 @@ services:
     user: "1000:1000"
     volumes:
       - ./homepage/config:/app/config
+      # Read-only so the resources widget can report free space on the media drive
+      - ${MEDIA_PATH:-/mnt/media}/main:/mnt/media/main:ro
     environment:
       - TZ=${TZ:-America/New_York}
       - HOMEPAGE_ALLOWED_HOSTS=homepage.woggles.work
@@ -99,6 +101,8 @@ services:
       - HOMEPAGE_VAR_BESZEL_USERNAME=${BESZEL_USERNAME:-}
       - HOMEPAGE_VAR_BESZEL_PASSWORD=${BESZEL_PASSWORD:-}
       - HOMEPAGE_VAR_SYNCTHING_API_KEY=${SYNCTHING_API_KEY:-}
+      - HOMEPAGE_VAR_TAILSCALE_DEVICE_ID=${TAILSCALE_DEVICE_ID:-}
+      - HOMEPAGE_VAR_TAILSCALE_API_KEY=${TAILSCALE_API_KEY:-}
       - DOCKER_HOST=tcp://dockerproxy:2375
     networks:
       - proxy

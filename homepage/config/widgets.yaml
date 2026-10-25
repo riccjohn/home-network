@@ -3,9 +3,24 @@
 # https://gethomepage.dev/configs/info-widgets/
 
 - resources:
+    label: System
     cpu: true
     memory: true
-    disk: /
+    uptime: true
+
+- resources:
+    label: Storage
+    disk:
+      - /
+      - /mnt/media/main
+
+- openmeteo:
+    label: Madison
+    latitude: 43.0731
+    longitude: -89.4012
+    timezone: America/Chicago
+    units: imperial
+    cache: 15
 
 - search:
     provider: duckduckgo
