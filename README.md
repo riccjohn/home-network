@@ -247,6 +247,7 @@ home-network/
 ├── traefik/
 │   ├── traefik.yml             # static config
 │   ├── dynamic/
+│   │   ├── middlewares.yml     # security headers (all routers) + rate-limit (opt-in)
 │   │   ├── tls.yml             # wildcard cert config
 │   │   └── services.yml        # Pi-hole backend
 │   └── letsencrypt/
