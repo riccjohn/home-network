@@ -46,6 +46,7 @@
           type: jellyfin
           url: http://jellyfin:8096
           key: "{{HOMEPAGE_VAR_JELLYFIN_API_KEY}}"
+          version: 2 # Jellyfin >= 10.12 (this server runs 12.0.0) uses the v2 widget API
           enableBlocks: true
 
 - Monitoring:
@@ -80,6 +81,7 @@
         widget:
           type: syncthing
           url: http://syncthing:8384
+          key: "{{HOMEPAGE_VAR_SYNCTHING_API_KEY}}"
     - FileBrowser:
         href: https://files.woggles.work
         description: Drag-and-drop file transfer

@@ -62,7 +62,7 @@ Edit `.env` and fill in:
 | `FILEBROWSER_PATH`        | Path FileBrowser serves (e.g. `/mnt/data`)                          |
 | `HERMES_VAULT_PATH`       | Hermes vault synced by Syncthing (e.g. `/home/newton/hermes/vault`) |
 
-`PIHOLE_API_KEY`, `JELLYFIN_API_KEY`, `PORTAINER_API_KEY`, and `PORTAINER_ENV_ID` can be left empty until after first run (see step 7).
+`PIHOLE_API_KEY`, `JELLYFIN_API_KEY`, `PORTAINER_API_KEY`, `PORTAINER_ENV_ID`, and `SYNCTHING_API_KEY` can be left empty until after first run (see step 8).
 
 ### 3. Create a Cloudflare API token
 
@@ -132,6 +132,7 @@ The script handles:
 - **Portainer** — creates the admin account (if not yet done), generates an API token, and looks up the environment ID
 - **Pi-hole** — reads the API key from the running container using `PIHOLE_PASSWORD` from `.env`
 - **Jellyfin** — authenticates with admin credentials to create an API key
+- **Syncthing** — reads the API key from the running container's config
 
 **Before running the script**, complete the Jellyfin initial setup wizard at `https://jellyfin.woggles.work` — it cannot be automated. The script will detect if it hasn't been done yet and remind you.
 
