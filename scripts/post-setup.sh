@@ -231,8 +231,10 @@ fi
 if ! is_set SYNCTHING_API_KEY; then
   echo "==> Syncthing"
 
-  SYNCTHING_API_KEY=$(docker exec syncthing grep -oP '(?<=<apikey>)[^<]+' \
-    /config/config.xml 2>/dev/null || echo "")
+  # Read from the bind-mounted config on the host: the linuxserver image is
+  # BusyBox, whose grep has no -P, so grepping inside the container fails silently.
+  SYNCTHING_API_KEY=$(sed -n 's:.*<apikey>\(.*\)</apikey>.*:\1:p' \
+    syncthing/config/config.xml 2>/dev/null | head -1 || echo "")
 
   if [[ -z "$SYNCTHING_API_KEY" ]]; then
     echo "    Could not read API key from Syncthing config."
