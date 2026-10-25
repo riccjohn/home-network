@@ -61,7 +61,7 @@ services:
       - "traefik.http.routers.traefik-dashboard.tls.domains[0].main=woggles.work"
       - "traefik.http.routers.traefik-dashboard.tls.domains[0].sans=*.woggles.work"
       - "traefik.http.routers.traefik-dashboard.service=api@internal"
-      - "traefik.http.routers.traefik-dashboard.middlewares=dashboard-auth"
+      - "traefik.http.routers.traefik-dashboard.middlewares=rate-limit@file,dashboard-auth"
       - "traefik.http.middlewares.dashboard-auth.basicauth.users=${TRAEFIK_DASHBOARD_USERS}"
 
   dockerproxy:
@@ -85,6 +85,8 @@ services:
     user: "1000:1000"
     volumes:
       - ./homepage/config:/app/config
+      # Read-only so the resources widget can report free space on the media drive
+      - ${MEDIA_PATH:-/mnt/media}/main:/mnt/media/main:ro
     environment:
       - TZ=${TZ:-America/New_York}
       - HOMEPAGE_ALLOWED_HOSTS=homepage.woggles.work
@@ -99,6 +101,8 @@ services:
       - HOMEPAGE_VAR_BESZEL_USERNAME=${BESZEL_USERNAME:-}
       - HOMEPAGE_VAR_BESZEL_PASSWORD=${BESZEL_PASSWORD:-}
       - HOMEPAGE_VAR_SYNCTHING_API_KEY=${SYNCTHING_API_KEY:-}
+      - HOMEPAGE_VAR_TAILSCALE_DEVICE_ID=${TAILSCALE_DEVICE_ID:-}
+      - HOMEPAGE_VAR_TAILSCALE_API_KEY=${TAILSCALE_API_KEY:-}
       - DOCKER_HOST=tcp://dockerproxy:2375
     networks:
       - proxy
@@ -151,6 +155,7 @@ services:
       - "traefik.http.routers.portainer.rule=Host(`portainer.woggles.work`)"
       - "traefik.http.routers.portainer.entrypoints=websecure"
       - "traefik.http.routers.portainer.tls.certresolver=cloudflare"
+      - "traefik.http.routers.portainer.middlewares=rate-limit@file"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
 
   filebrowser:
@@ -168,6 +173,7 @@ services:
       - "traefik.http.routers.filebrowser.rule=Host(`files.woggles.work`)"
       - "traefik.http.routers.filebrowser.entrypoints=websecure"
       - "traefik.http.routers.filebrowser.tls.certresolver=cloudflare"
+      - "traefik.http.routers.filebrowser.middlewares=rate-limit@file"
       - "traefik.http.services.filebrowser.loadbalancer.server.port=80"
 
   syncthing:
@@ -194,6 +200,7 @@ services:
       - "traefik.http.routers.syncthing.rule=Host(`syncthing.woggles.work`)"
       - "traefik.http.routers.syncthing.entrypoints=websecure"
       - "traefik.http.routers.syncthing.tls.certresolver=cloudflare"
+      - "traefik.http.routers.syncthing.middlewares=rate-limit@file"
       - "traefik.http.services.syncthing.loadbalancer.server.port=8384"
 
   wallabag:
@@ -218,6 +225,7 @@ services:
       - "traefik.http.routers.wallabag.rule=Host(`wallabag.woggles.work`)"
       - "traefik.http.routers.wallabag.entrypoints=websecure"
       - "traefik.http.routers.wallabag.tls.certresolver=cloudflare"
+      - "traefik.http.routers.wallabag.middlewares=rate-limit@file"
       - "traefik.http.services.wallabag.loadbalancer.server.port=80"
 
   kosync:
@@ -236,6 +244,7 @@ services:
       - "traefik.http.routers.kosync.rule=Host(`kosync.woggles.work`)"
       - "traefik.http.routers.kosync.entrypoints=websecure"
       - "traefik.http.routers.kosync.tls.certresolver=cloudflare"
+      - "traefik.http.routers.kosync.middlewares=rate-limit@file"
       - "traefik.http.services.kosync.loadbalancer.server.port=3000"
 
   calibre-web:
@@ -256,6 +265,7 @@ services:
       - "traefik.http.routers.calibre-web.rule=Host(`calibre-web.woggles.work`)"
       - "traefik.http.routers.calibre-web.entrypoints=websecure"
       - "traefik.http.routers.calibre-web.tls.certresolver=cloudflare"
+      - "traefik.http.routers.calibre-web.middlewares=rate-limit@file"
       - "traefik.http.services.calibre-web.loadbalancer.server.port=8083"
 
   beszel-hub:
