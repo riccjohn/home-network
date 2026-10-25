@@ -1,0 +1,19 @@
+http:
+  middlewares:
+    # Applied to every router on the websecure entrypoint (see traefik.yml).
+    # No Content-Security-Policy: a generic one breaks most of the proxied apps.
+    security-headers:
+      headers:
+        stsSeconds: 2592000
+        stsIncludeSubdomains: false
+        contentTypeNosniff: true
+        frameDeny: true
+        referrerPolicy: strict-origin-when-cross-origin
+
+    # Opt-in per router via labels (login-bearing apps). Not applied to Jellyfin,
+    # whose clients make bursts of requests for streaming and artwork.
+    rate-limit:
+      rateLimit:
+        average: 100
+        period: 1s
+        burst: 200
