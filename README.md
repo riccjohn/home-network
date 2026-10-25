@@ -198,6 +198,8 @@ tailscale status
 ssh john@<tailscale-ip>
 ```
 
+By default, `*.woggles.work` URLs only resolve on the home LAN — remotely you'd need `http://<tailscale-ip>:<port>` for each service. To make `*.woggles.work` resolve correctly over Tailscale too (same URLs everywhere), configure split DNS in the Tailscale admin console — see [docs/tailscale.md](docs/tailscale.md#resolving-woggleswork-remotely-magicdns-split-dns) for the exact steps.
+
 See [docs/tailscale.md](docs/tailscale.md) for security recommendations and managing device access.
 
 ## Updating
