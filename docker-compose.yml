@@ -16,6 +16,8 @@ services:
       WEBPASSWORD: ${PIHOLE_PASSWORD:-changeme}
       # Move web UI off port 80/443 so Traefik can own those ports
       FTLCONF_webserver_port: "8080"
+      # Answer DNS from Tailscale clients too (default LOCAL drops queries from non-local subnets)
+      FTLCONF_dns_listeningMode: "all"
       PIHOLE_DNS: ${PIHOLE_DNS:-8.8.8.8;1.1.1.1}
       SERVERIP: ${SERVER_IP:-192.168.0.243}
       INTERFACE: eth0
