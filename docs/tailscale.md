@@ -126,6 +126,10 @@ These have no host port bindings — they are only accessible through Traefik on
 
 The Traefik dashboard (`traefik.woggles.work`) requires BasicAuth credentials even on the LAN. Set `TRAEFIK_DASHBOARD_USERS` in `.env` before starting Traefik (see README step 2).
 
+## Homepage widget API key
+
+The Homepage Tailscale widget reads `TAILSCALE_DEVICE_ID` and `TAILSCALE_API_KEY` from `.env` (see `.env.example` for where to find them). Tailscale API access tokens expire after at most 90 days. When the widget starts showing an API error, generate a new token at https://login.tailscale.com/admin/settings/keys, update `TAILSCALE_API_KEY` in the server's `.env`, and run `docker compose up -d homepage`.
+
 ## Known caveat: Tailscale can bypass Pi-hole ad-blocking
 
 On macOS (and likely other OSes), when a device is connected to Tailscale, the OS resolver prioritizes Tailscale's MagicDNS resolver (`100.100.100.100`) over the LAN resolver that normally points at Pi-hole — even while the device is on the home network. You can confirm this on a Mac with `scutil --dns`: the Tailscale resolver shows up at a lower (higher-priority) `order` than the LAN one. The practical effect is that Pi-hole's ad-blocking is silently skipped for DNS queries from any device connected to Tailscale, since those queries never reach Pi-hole.

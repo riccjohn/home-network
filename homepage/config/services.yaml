@@ -54,7 +54,9 @@
         href: https://hermes-ui.woggles.work
         description: Hermes agent dashboard
         icon: hermes
-        siteMonitor: https://hermes-ui.woggles.work
+        # Internal URL: the public one is behind Traefik's IP allowlist, which rejects the homepage container
+        siteMonitor: http://hermes-dashboard:9119
+        # Compose-generated name (project "hermes" + service "hermes-dashboard"); update if that changes
         server: my-docker
         container: hermes-hermes-dashboard-1
 
