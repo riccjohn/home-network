@@ -41,7 +41,7 @@
     - Hermes:
         href: https://hermes-ui.woggles.work
         description: Hermes agent dashboard
-        icon: mdi-robot
+        icon: hermes
 
 - Media:
     - Jellyfin:
