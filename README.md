@@ -22,6 +22,7 @@ Self-hosted home server stack running on Ubuntu Server (Lenovo ThinkCentre), man
 | KOReader Sync | https://kosync.woggles.work       | Reading progress sync      |
 | Calibre-Web   | https://calibre-web.woggles.work  | Ebook library              |
 | Beszel        | https://beszel.woggles.work       | Server resource monitoring |
+| Hermes        | https://hermes-ui.woggles.work    | AI agent dashboard         |
 
 ## Prerequisites
 

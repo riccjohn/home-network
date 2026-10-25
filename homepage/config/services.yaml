@@ -37,6 +37,12 @@
           env: "{{HOMEPAGE_VAR_PORTAINER_ENV_ID}}"
           key: "{{HOMEPAGE_VAR_PORTAINER_API_KEY}}"
 
+- AI:
+    - Hermes:
+        href: https://hermes-ui.woggles.work
+        description: Hermes agent dashboard
+        icon: mdi-robot
+
 - Media:
     - Jellyfin:
         href: https://jellyfin.woggles.work
