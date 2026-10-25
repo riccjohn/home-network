@@ -2,6 +2,35 @@
 # For configuration options and examples, please see:
 # https://gethomepage.dev/configs/settings/
 
-providers:
-  openweathermap: openweathermapapikey
-  weatherapi: weatherapiapikey
+title: Woggles
+theme: dark
+color: slate
+headerStyle: clean
+statusStyle: dot
+useEqualHeights: true
+
+layout:
+  Network:
+    style: row
+    columns: 2
+  Infrastructure:
+    style: row
+    columns: 2
+  AI:
+    style: row
+    columns: 1
+  Media:
+    style: row
+    columns: 1
+  Monitoring:
+    style: row
+    columns: 1
+  Books:
+    style: row
+    columns: 1
+  Files:
+    style: row
+    columns: 2
+  Reading:
+    style: row
+    columns: 2

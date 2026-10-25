@@ -12,6 +12,9 @@
           url: http://192.168.0.243:8080
           key: "{{HOMEPAGE_VAR_PIHOLE_API_KEY}}"
           version: 6
+          fields: ["queries", "blocked", "blocked_percent"]
+        server: my-docker
+        container: pihole
     - Traefik:
         href: https://traefik.woggles.work
         description: Reverse proxy and SSL termination
@@ -21,12 +24,19 @@
           url: https://traefik.woggles.work
           username: "{{HOMEPAGE_VAR_TRAEFIK_USERNAME}}"
           password: "{{HOMEPAGE_VAR_TRAEFIK_PASSWORD}}"
+        server: my-docker
+        container: traefik
 
 - Infrastructure:
     - Tailscale:
         href: https://login.tailscale.com/admin
         description: VPN and remote access
         icon: tailscale
+        widget:
+          type: tailscale
+          deviceid: "{{HOMEPAGE_VAR_TAILSCALE_DEVICE_ID}}"
+          key: "{{HOMEPAGE_VAR_TAILSCALE_API_KEY}}"
+          fields: ["address", "last_seen", "expires"]
     - Portainer:
         href: https://portainer.woggles.work
         description: Docker container management
@@ -36,12 +46,17 @@
           url: http://portainer:9000
           env: "{{HOMEPAGE_VAR_PORTAINER_ENV_ID}}"
           key: "{{HOMEPAGE_VAR_PORTAINER_API_KEY}}"
+        server: my-docker
+        container: portainer
 
 - AI:
     - Hermes:
         href: https://hermes-ui.woggles.work
         description: Hermes agent dashboard
         icon: hermes
+        siteMonitor: https://hermes-ui.woggles.work
+        server: my-docker
+        container: hermes-hermes-dashboard-1
 
 - Media:
     - Jellyfin:
@@ -54,6 +69,8 @@
           key: "{{HOMEPAGE_VAR_JELLYFIN_API_KEY}}"
           version: 2 # Jellyfin >= 10.12 (this server runs 12.0.0) uses the v2 widget API
           enableBlocks: true
+        server: my-docker
+        container: jellyfin
 
 - Monitoring:
     - Beszel:
@@ -66,6 +83,8 @@
           username: "{{HOMEPAGE_VAR_BESZEL_USERNAME}}"
           password: "{{HOMEPAGE_VAR_BESZEL_PASSWORD}}"
           version: 2
+        server: my-docker
+        container: beszel-hub
 
 - Books:
     - Calibre-Web:
@@ -78,6 +97,8 @@
           username: "{{HOMEPAGE_VAR_CALIBREWEB_USERNAME}}"
           password: "{{HOMEPAGE_VAR_CALIBREWEB_PASSWORD}}"
           fields: ["books", "authors", "categories", "series"]
+        server: my-docker
+        container: calibre-web
 
 - Files:
     - Syncthing:
@@ -88,16 +109,27 @@
           type: syncthing
           url: http://syncthing:8384
           key: "{{HOMEPAGE_VAR_SYNCTHING_API_KEY}}"
+        server: my-docker
+        container: syncthing
     - FileBrowser:
         href: https://files.woggles.work
         description: Drag-and-drop file transfer
         icon: filebrowser
+        siteMonitor: http://filebrowser:80
+        server: my-docker
+        container: filebrowser
 
 - Reading:
     - Wallabag:
         href: https://wallabag.woggles.work
         description: Read-it-later
         icon: wallabag
+        siteMonitor: http://wallabag:80
+        server: my-docker
+        container: wallabag
     - KOReader Sync:
         href: https://kosync.woggles.work
         description: Reading progress sync (no UI)
+        # No UI to probe, so container health only
+        server: my-docker
+        container: kosync
