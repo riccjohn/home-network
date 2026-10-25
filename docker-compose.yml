@@ -240,6 +240,7 @@ services:
       - "traefik.http.routers.kosync.rule=Host(`kosync.woggles.work`)"
       - "traefik.http.routers.kosync.entrypoints=websecure"
       - "traefik.http.routers.kosync.tls.certresolver=cloudflare"
+      - "traefik.http.routers.kosync.middlewares=rate-limit@file"
       - "traefik.http.services.kosync.loadbalancer.server.port=3000"
 
   calibre-web:

@@ -4,10 +4,10 @@ http:
     # No Content-Security-Policy: a generic one breaks most of the proxied apps.
     security-headers:
       headers:
-        stsSeconds: 31536000
+        stsSeconds: 2592000
         stsIncludeSubdomains: false
         contentTypeNosniff: true
-        customFrameOptionsValue: SAMEORIGIN
+        frameDeny: true
         referrerPolicy: strict-origin-when-cross-origin
 
     # Opt-in per router via labels (login-bearing apps). Not applied to Jellyfin,
