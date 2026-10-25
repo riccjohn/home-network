@@ -10,6 +10,9 @@
 
 set -euo pipefail
 
+# Resolve paths (.env, syncthing/config) relative to the repo root
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
 ENV_FILE=".env"
 
 # ---- helpers ----------------------------------------------------------------
@@ -233,8 +236,15 @@ if ! is_set SYNCTHING_API_KEY; then
 
   # Read from the bind-mounted config on the host: the linuxserver image is
   # BusyBox, whose grep has no -P, so grepping inside the container fails silently.
-  SYNCTHING_API_KEY=$(sed -n 's:.*<apikey>\(.*\)</apikey>.*:\1:p' \
-    syncthing/config/config.xml 2>/dev/null | head -1 || echo "")
+  SYNCTHING_CONFIG="syncthing/config/config.xml"
+  SYNCTHING_API_KEY=""
+  if [[ ! -e "$SYNCTHING_CONFIG" ]]; then
+    echo "    $SYNCTHING_CONFIG not found (has Syncthing started at least once?)."
+  elif [[ ! -r "$SYNCTHING_CONFIG" ]]; then
+    echo "    $SYNCTHING_CONFIG is not readable by $(id -un); re-run with sudo or fix its permissions."
+  else
+    SYNCTHING_API_KEY=$(sed -n 's:.*<apikey>\([^<]*\)</apikey>.*:\1:p' "$SYNCTHING_CONFIG" | head -1)
+  fi
 
   if [[ -z "$SYNCTHING_API_KEY" ]]; then
     echo "    Could not read API key from Syncthing config."
