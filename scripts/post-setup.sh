@@ -226,6 +226,28 @@ else
   echo ""
 fi
 
+# ---- Syncthing ---------------------------------------------------------------
+
+if ! is_set SYNCTHING_API_KEY; then
+  echo "==> Syncthing"
+
+  SYNCTHING_API_KEY=$(docker exec syncthing grep -oP '(?<=<apikey>)[^<]+' \
+    /config/config.xml 2>/dev/null || echo "")
+
+  if [[ -z "$SYNCTHING_API_KEY" ]]; then
+    echo "    Could not read API key from Syncthing config."
+    echo "    Get it manually: https://syncthing.woggles.work > Settings > General > API Key"
+    echo "    Then set SYNCTHING_API_KEY in .env."
+  else
+    set_env_var "SYNCTHING_API_KEY" "$SYNCTHING_API_KEY"
+    echo "    SYNCTHING_API_KEY written to .env."
+  fi
+  echo ""
+else
+  echo "==> Syncthing: already configured, skipping."
+  echo ""
+fi
+
 # ---- Apply ------------------------------------------------------------------
 
 echo "==> Restarting Homepage to apply new keys..."
