@@ -62,9 +62,11 @@ From there you can:
 
 ## Resolving `*.woggles.work` remotely (MagicDNS split DNS)
 
-By default, `*.woggles.work` only resolves on the home LAN: Pi-hole answers those queries with the server's LAN IP (`192.168.0.243`, see `pihole/etc-dnsmasq.d/02-local-dns.conf`), and this setup doesn't advertise subnet routes (`--advertise-routes`), so remote tailnet devices have no path to that LAN IP at all. Without split DNS, remote access means falling back to per-service `<tailscale-ip>:<port>` URLs, as described below.
+Without split DNS, `*.woggles.work` resolves (via public DNS or Pi-hole) to the server's LAN IP (`192.168.0.243`), and this setup doesn't advertise subnet routes (`--advertise-routes`), so remote tailnet devices have no path to that address. Without it, remote access means falling back to per-service `<tailscale-ip>:<port>` URLs, as described below.
 
-To make `*.woggles.work` resolve correctly over Tailscale too — so the same URLs work at home and remotely — add a split DNS override in the Tailscale admin console that points `woggles.work` at the server's **Tailscale IP** instead of its LAN IP. The Tailscale IP is always reachable over the tailnet, whether a device is on the home LAN or remote, so this works in both cases. Traefik already listens on ports 80/443 on all interfaces and serves the existing wildcard cert for `*.woggles.work`, so no changes are needed in this repo (`docker-compose.yml`, Traefik config, and Pi-hole config are all unaffected).
+To make `*.woggles.work` resolve correctly over Tailscale too — so the same URLs work at home and remotely — add a split DNS override in the Tailscale admin console that sends `woggles.work` queries to the server's **Tailscale IP**. That only chooses _which resolver answers_: the server's Pi-hole. Pi-hole must then answer tailnet clients with the server's Tailscale IP (always reachable over the tailnet) and LAN clients with the LAN IP. It does this with `pihole/etc-dnsmasq.d/woggles.hosts`, which lists every service name twice (once per IP); dnsmasq's `localise-queries` (on by default in Pi-hole) returns the address on the subnet the query arrived from. Traefik already listens on ports 80/443 on all interfaces and serves the existing wildcard cert for `*.woggles.work`.
+
+**Adding a service:** add two lines to `woggles.hosts` (`192.168.0.243 name.woggles.work` and `100.97.194.89 name.woggles.work`), then `docker restart pihole`. Names not listed fall through to public DNS, which returns the LAN IP, so they work at home but not remotely. (A single `address=/woggles.work/<LAN IP>` wildcard would make every remote device resolve to the unreachable LAN IP — don't use one.)
 
 **Steps (Tailscale admin console — not something this repo can configure for you):**
 

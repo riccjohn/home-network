@@ -1,0 +1,4 @@
+# One line per IP per name. dnsmasq's localise-queries (on by default in Pi-hole) returns the address
+# on the subnet the query arrived from: LAN IP for LAN clients, Tailscale IP for tailnet clients.
+192.168.0.243 beszel calibre-web files hermes hermes-ui homepage jellyfin kosync newton pihole portainer syncthing traefik wallabag.woggles.work
+100.97.194.89 beszel calibre-web files hermes hermes-ui homepage jellyfin kosync newton pihole portainer syncthing traefik wallabag.woggles.work
