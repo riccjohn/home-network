@@ -54,11 +54,18 @@
         href: https://hermes-ui.woggles.work
         description: Hermes agent dashboard
         icon: hermes
+        statusStyle: basic # text badges instead of dots: Docker state + site monitor
         # Internal URL: the public one is behind Traefik's IP allowlist, which rejects the homepage container
-        siteMonitor: http://hermes-dashboard:9119
-        # Compose-generated name (project "hermes" + service "hermes-dashboard"); update if that changes
+        siteMonitor: http://hermes-gateway:9119
+        # The dashboard runs inside hermes-gateway. Compose-generated name (project "hermes" + service "hermes-gateway"); update if that changes
         server: my-docker
-        container: hermes-hermes-dashboard-1
+        container: hermes-hermes-gateway-1
+    - Hermes Webapp:
+        href: https://hermes.woggles.work
+        description: Hermes chat webapp
+        icon: hermes
+        statusStyle: basic
+        siteMonitor: http://hermes-gateway:9120
 
 - Media:
     - Jellyfin:
