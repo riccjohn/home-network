@@ -23,6 +23,7 @@ Self-hosted home server stack running on Ubuntu Server (Lenovo ThinkCentre), man
 | Calibre-Web   | https://calibre-web.woggles.work  | Ebook library              |
 | Beszel        | https://beszel.woggles.work       | Server resource monitoring |
 | Hermes        | https://hermes-ui.woggles.work    | AI agent dashboard         |
+| Hermes Webapp | https://hermes.woggles.work       | AI agent chat webapp       |
 
 ## Prerequisites
 
