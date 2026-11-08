@@ -23,6 +23,7 @@ Self-hosted home server stack running on Ubuntu Server (Lenovo ThinkCentre), man
 | Calibre-Web   | https://calibre-web.woggles.work  | Ebook library              |
 | Beszel        | https://beszel.woggles.work       | Server resource monitoring |
 | Hermes        | https://hermes-ui.woggles.work    | AI agent dashboard         |
+| Hermes Webapp | https://hermes.woggles.work       | AI agent chat webapp       |
 
 ## Prerequisites
 
@@ -95,7 +96,7 @@ So all LAN devices resolve `*.woggles.work` to the server:
 4. Set **Secondary DNS** to `8.8.8.8` (fallback if Pi-hole is down)
 5. Save and apply — devices will pick up the new DNS on their next DHCP renewal (or reconnect)
 
-Pi-hole's local DNS config at `pihole/etc-dnsmasq.d/02-local-dns.conf` already resolves `*.woggles.work` to the server IP — no changes needed there.
+Pi-hole's local DNS config (`pihole/etc-dnsmasq.d/02-local-dns.conf`, which loads the names in `woggles.hosts`) already resolves the listed `*.woggles.work` names to the server IP — no changes needed for the existing services. When you add a new service, append its full name (`name.woggles.work`) to both IP lines in `woggles.hosts` and run `docker restart pihole`; unlisted names fall back to public DNS (the LAN IP), which works at home but not remotely.
 
 ### 6. Open ports 80 and 443 on the server firewall
 
@@ -201,7 +202,7 @@ tailscale status
 ssh john@<tailscale-ip>
 ```
 
-By default, `*.woggles.work` URLs only resolve on the home LAN — remotely you'd need `http://<tailscale-ip>:<port>` for each service. To make `*.woggles.work` resolve correctly over Tailscale too (same URLs everywhere), configure split DNS in the Tailscale admin console — see [docs/tailscale.md](docs/tailscale.md#resolving-woggleswork-remotely-magicdns-split-dns) for the exact steps.
+By default, `*.woggles.work` URLs only resolve on the home LAN — remotely you'd need `http://<tailscale-ip>:<port>` for each service. To make `*.woggles.work` resolve correctly over Tailscale too (same URLs everywhere), configure split DNS in the Tailscale admin console — see [docs/tailscale.md](docs/tailscale.md#resolving-woggleswork-remotely-magicdns-split-dns) for the exact steps. That guide also covers a required setting (`sudo tailscale set --snat-subnet-routes=false`) so Traefik's IP allowlists see real tailnet client addresses.
 
 See [docs/tailscale.md](docs/tailscale.md) for security recommendations and managing device access.
 
@@ -244,7 +245,8 @@ home-network/
 │   └── post-setup.sh           # grab API keys after first run
 ├── pihole/
 │   └── etc-dnsmasq.d/
-│       └── 02-local-dns.conf   # wildcard DNS for *.woggles.work
+│       ├── 02-local-dns.conf   # loads woggles.hosts
+│       └── woggles.hosts       # per-service names: LAN IP for LAN clients, Tailscale IP for tailnet clients
 ├── traefik/
 │   ├── traefik.yml             # static config
 │   ├── dynamic/
