@@ -62,11 +62,13 @@ From there you can:
 
 ## Resolving `*.woggles.work` remotely (MagicDNS split DNS)
 
-Without split DNS, `*.woggles.work` resolves (via public DNS or Pi-hole) to the server's LAN IP (`192.168.0.243`), and this setup doesn't advertise subnet routes (`--advertise-routes`), so remote tailnet devices have no path to that address. Without it, remote access means falling back to per-service `<tailscale-ip>:<port>` URLs, as described below.
+Without split DNS, `*.woggles.work` resolves (via public DNS or Pi-hole) to the server's LAN IP (`192.168.0.243`), and this setup doesn't advertise subnet routes (`--advertise-routes`), so remote tailnet devices have no path to that address. Remote access then falls back to per-service `<tailscale-ip>:<port>` URLs, as described below.
 
 To make `*.woggles.work` resolve correctly over Tailscale too — so the same URLs work at home and remotely — add a split DNS override in the Tailscale admin console that sends `woggles.work` queries to the server's **Tailscale IP**. That only chooses _which resolver answers_: the server's Pi-hole. Pi-hole must then answer tailnet clients with the server's Tailscale IP (always reachable over the tailnet) and LAN clients with the LAN IP. It does this with `pihole/etc-dnsmasq.d/woggles.hosts`, which lists every service name twice (once per IP); dnsmasq's `localise-queries` (on by default in Pi-hole) returns the address on the subnet the query arrived from. Traefik already listens on ports 80/443 on all interfaces and serves the existing wildcard cert for `*.woggles.work`.
 
 **Adding a service:** append the full name (`name.woggles.work`, not just `name`) to both the `192.168.0.243` line and the `100.97.194.89` line of `woggles.hosts`, then `docker restart pihole`. In a hosts file every word after the IP is a separate name, so a bare name would not match. Names not listed fall through to public DNS, which returns the LAN IP, so they work at home but not remotely. (A single `address=/woggles.work/<LAN IP>` wildcard would make every remote device resolve to the unreachable LAN IP — don't use one.)
+
+`woggles.hosts` hard-codes the server's Tailscale IP (`100.97.194.89`), so update it if the node is ever re-registered or its IP changes. It also lists `newton.woggles.work`, a name for the server itself that has no Traefik router. Queries that arrive on other interfaces (for example from Docker bridges) get both addresses back.
 
 **Steps (Tailscale admin console — not something this repo can configure for you):**
 
@@ -77,7 +79,25 @@ To make `*.woggles.work` resolve correctly over Tailscale too — so the same UR
 5. Check **Restrict to domain** and enter `woggles.work`
 6. Save
 
+### Required: turn off Tailscale's source rewriting
+
+Remote devices now reach Traefik through the server's Tailscale IP. By default, Tailscale rewrites the source address of traffic it forwards into other networks (here, into Docker's bridge) to the bridge gateway (`172.19.0.1`), so Traefik would see that address instead of the real client. IP allowlists such as `hermes-ips` (`100.64.0.0/10` + the LAN) then reject every tailnet request with `403 Forbidden`, and per-IP features (such as Hermes's login throttle) treat all tailnet devices as one client. Turn the rewriting off:
+
+```bash
+sudo tailscale set --snat-subnet-routes=false
+tailscale debug prefs | grep NoSNAT   # should print "NoSNAT": true
+```
+
+The setting persists across reboots and Tailscale upgrades. Existing connections keep their old rewrite, so reconnect Tailscale on the client (or wait for old connections to end) after changing it. This server does not advertise subnet routes or act as an exit node; if that ever changes, turn the setting back on (`--snat-subnet-routes=true`) and revisit the allowlists, because routed traffic then needs the rewrite to get replies back.
+
 ### Verification
+
+Check what Pi-hole answers on each address (run on the server):
+
+```bash
+dig +short @192.168.0.243 homepage.woggles.work   # LAN IP:        192.168.0.243
+dig +short @100.97.194.89 homepage.woggles.work   # Tailscale IP:  100.97.194.89
+```
 
 With Tailscale connected on a device **outside** the home network:
 
