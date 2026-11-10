@@ -51,7 +51,7 @@
 
 - AI:
     - Hermes:
-        href: https://hermes-ui.woggles.work
+        href: https://hermes-dashboard.woggles.work
         description: Hermes agent dashboard
         icon: hermes
         statusStyle: basic # text badges instead of dots: Docker state + site monitor
