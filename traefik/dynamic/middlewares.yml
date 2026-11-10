@@ -10,11 +10,11 @@ http:
         frameDeny: true
         referrerPolicy: strict-origin-when-cross-origin
 
-    # Allowlist for the sandboxed Hermes 2 route (see docs/hermes2.md): the
+    # Allowlist for the sandboxed Hermes routes (see docs/hermes.md): the
     # tailnet (CGNAT range) plus the home LAN. Traefik sees real client IPs only
     # because Tailscale source rewriting is off (docs/tailscale.md); with it on,
     # tailnet requests would arrive as the Docker bridge gateway and get 403.
-    hermes2-ips:
+    hermes-ips:
       ipAllowList:
         sourceRange:
           - "100.64.0.0/10"
