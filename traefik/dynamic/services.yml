@@ -8,8 +8,9 @@ http:
         certResolver: cloudflare
       service: pihole-svc
 
-    # Sandboxed Hermes agent on its own machine (docs/hermes2.md). The backend
-    # is reachable only over the tailnet, and only from this host.
+    # Sandboxed Hermes agent on its own machine (docs/hermes2.md). The backends
+    # are reachable only over the tailnet, and only from this host.
+    # hermes2: the chat webapp (port 9120); hermes2-dashboard: the dashboard (9119).
     hermes2:
       rule: "Host(`hermes2.woggles.work`)"
       entryPoints:
@@ -20,6 +21,17 @@ http:
         - hermes2-ips
         - rate-limit
       service: hermes2-svc
+
+    hermes2-dashboard:
+      rule: "Host(`hermes2-dashboard.woggles.work`)"
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: cloudflare
+      middlewares:
+        - hermes2-ips
+        - rate-limit
+      service: hermes2-dashboard-svc
 
   services:
     pihole-svc:
@@ -32,4 +44,9 @@ http:
         servers:
           # Tailscale IP of the sandboxed Hermes machine (plain HTTP is fine:
           # the hop is already WireGuard-encrypted)
+          - url: "http://100.112.242.112:9120"
+
+    hermes2-dashboard-svc:
+      loadBalancer:
+        servers:
           - url: "http://100.112.242.112:9119"
