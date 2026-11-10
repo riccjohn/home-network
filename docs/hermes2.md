@@ -71,6 +71,9 @@ webapp:
   desktop-app backend and answers with "web UI disabled".
 - The webapp is served by the gateway (`hermes gateway run`) and needs a sign-in
   provider because it binds a non-loopback address.
+- The webapp bundle is not built by default. Without it the page shows "The
+  Webapp is not built". Build it once with `hermes webapp --build-only`
+  (a few minutes; it downloads npm packages), then reload the page.
 - `webapp.host` accepts only loopback or a wildcard, so the machine's firewall
   must drop 9120 on every interface except `tailscale0`.
 
