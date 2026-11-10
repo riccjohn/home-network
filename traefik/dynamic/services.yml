@@ -8,8 +8,28 @@ http:
         certResolver: cloudflare
       service: pihole-svc
 
+    # Sandboxed Hermes agent on its own machine (docs/hermes2.md). The backend
+    # is reachable only over the tailnet, and only from this host.
+    hermes2:
+      rule: "Host(`hermes2.woggles.work`)"
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: cloudflare
+      middlewares:
+        - hermes2-ips
+        - rate-limit
+      service: hermes2-svc
+
   services:
     pihole-svc:
       loadBalancer:
         servers:
           - url: "http://host.docker.internal:8080"
+
+    hermes2-svc:
+      loadBalancer:
+        servers:
+          # Tailscale IP of the sandboxed Hermes machine (plain HTTP is fine:
+          # the hop is already WireGuard-encrypted)
+          - url: "http://100.112.242.112:9119"

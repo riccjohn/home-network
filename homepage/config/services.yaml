@@ -86,6 +86,10 @@
         icon: hermes
         statusStyle: basic
         siteMonitor: http://hermes-gateway:9120
+    - Hermes 2:
+        href: https://hermes2.woggles.work
+        description: Sandboxed Hermes agent
+        icon: hermes
 
 - Media:
     - Jellyfin:
