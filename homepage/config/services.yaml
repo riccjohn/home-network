@@ -54,10 +54,16 @@
         href: https://hermes-dashboard.woggles.work
         description: Hermes agent dashboard
         icon: hermes
+        statusStyle: basic
+        # Tailscale IP of the sandboxed Hermes machine (docs/hermes.md). The public URL is behind
+        # Traefik's IP allowlist, whose 403 Homepage counts as "up", so probe the backend directly
+        siteMonitor: http://100.112.242.112:9119
     - Hermes Webapp:
         href: https://hermes.woggles.work
         description: Hermes chat webapp
         icon: hermes
+        statusStyle: basic
+        siteMonitor: http://100.112.242.112:9120
 
 - Media:
     - Jellyfin:

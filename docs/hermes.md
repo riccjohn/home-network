@@ -82,7 +82,8 @@ webapp:
 
 - The backend addresses (`hermes-svc` and `hermes-dashboard-svc` in
   `traefik/dynamic/services.yml`) use the Hermes machine's **Tailscale IP**. Update it if that node is ever
-  re-registered.
+  re-registered. The Homepage status badges (`siteMonitor` on the two Hermes
+  tiles in `homepage/config/services.yaml`) probe the same IP, so update them too.
 - The Traefik container reaches it through the host's Tailscale interface.
   Docker masquerades the container's traffic, so the ACL should see this
   server's Tailscale IP as the source (the check below confirms it).
