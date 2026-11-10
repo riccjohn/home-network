@@ -87,8 +87,12 @@
         statusStyle: basic
         siteMonitor: http://hermes-gateway:9120
     - Hermes 2:
+        href: https://hermes2-dashboard.woggles.work
+        description: Sandboxed Hermes agent dashboard
+        icon: hermes
+    - Hermes 2 Webapp:
         href: https://hermes2.woggles.work
-        description: Sandboxed Hermes agent
+        description: Sandboxed Hermes chat webapp
         icon: hermes
 
 - Media:
