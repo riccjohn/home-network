@@ -24,6 +24,7 @@ Self-hosted home server stack running on Ubuntu Server (Lenovo ThinkCentre), man
 | Beszel        | https://beszel.woggles.work           | Server resource monitoring |
 | Hermes        | https://hermes-dashboard.woggles.work | AI agent dashboard         |
 | Hermes Webapp | https://hermes.woggles.work           | AI agent chat webapp       |
+| Hermes 2      | https://hermes2.woggles.work          | Sandboxed agent dashboard  |
 
 ## Prerequisites
 
