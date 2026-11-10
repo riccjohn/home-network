@@ -167,5 +167,5 @@ Treat this as a separate, optional step from the split DNS override above — an
 ## Security recommendations
 
 - **Enable 2FA** on your Tailscale account (under Settings → Account). This is the primary credential protecting remote access.
-- **Review ACLs** in the admin console. By default all devices on the tailnet can reach each other; you can restrict this. [hermes2.md](hermes2.md) has a worked example: a tagged, outbound-blocked machine that only this server's Traefik may reach.
+- **Review ACLs** in the admin console. By default all devices on the tailnet can reach each other; you can restrict this. [hermes.md](hermes.md) has a worked example: a tagged, outbound-blocked machine that only this server's Traefik may reach.
 - Do not use `--advertise-routes` unless you intentionally want all tailnet devices to reach the full LAN.

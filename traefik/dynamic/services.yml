@@ -8,30 +8,30 @@ http:
         certResolver: cloudflare
       service: pihole-svc
 
-    # Sandboxed Hermes agent on its own machine (docs/hermes2.md). The backends
+    # Sandboxed Hermes agent on its own machine (docs/hermes.md). The backends
     # are reachable only over the tailnet, and only from this host.
-    # hermes2: the chat webapp (port 9120); hermes2-dashboard: the dashboard (9119).
-    hermes2:
-      rule: "Host(`hermes2.woggles.work`)"
+    # hermes: the chat webapp (port 9120); hermes-dashboard: the dashboard (9119).
+    hermes:
+      rule: "Host(`hermes.woggles.work`)"
       entryPoints:
         - websecure
       tls:
         certResolver: cloudflare
       middlewares:
-        - hermes2-ips
+        - hermes-ips
         - rate-limit
-      service: hermes2-svc
+      service: hermes-svc
 
-    hermes2-dashboard:
-      rule: "Host(`hermes2-dashboard.woggles.work`)"
+    hermes-dashboard:
+      rule: "Host(`hermes-dashboard.woggles.work`)"
       entryPoints:
         - websecure
       tls:
         certResolver: cloudflare
       middlewares:
-        - hermes2-ips
+        - hermes-ips
         - rate-limit
-      service: hermes2-dashboard-svc
+      service: hermes-dashboard-svc
 
   services:
     pihole-svc:
@@ -39,14 +39,14 @@ http:
         servers:
           - url: "http://host.docker.internal:8080"
 
-    hermes2-svc:
+    hermes-svc:
       loadBalancer:
         servers:
           # Tailscale IP of the sandboxed Hermes machine (plain HTTP is fine:
           # the hop is already WireGuard-encrypted)
           - url: "http://100.112.242.112:9120"
 
-    hermes2-dashboard-svc:
+    hermes-dashboard-svc:
       loadBalancer:
         servers:
           - url: "http://100.112.242.112:9119"
